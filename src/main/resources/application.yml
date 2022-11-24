@@ -1,0 +1,51 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /apigl
+
+spring:
+   datasource:
+      dynamic:
+         primary: DBAPIGL
+         strict: true
+         datasource:
+            DBAPIGL:
+               url: jdbc:sqlserver://127.0.0.1;database=localtest;
+               username: tommy
+               password: 12345678
+               driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+            DBTLPM:
+               url: jdbc:sqlserver://127.0.0.1;database=DBTLPM;
+               username: lkc01
+               password: 123456
+               driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+            DBTOAPI:
+               url: jdbc:sqlserver://127.0.0.1;database=DBTOAPI;
+               username: lkc02
+               password: 1234
+               driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+            DBTREWARD:
+               url: jdbc:sqlserver://127.0.0.1;database=DBTREWARD
+               username: tommy
+               password: 12345678
+               driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+            DBTICP:
+               url: jdbc:sqlserver://127.0.0.1;database=DBTICP
+               username: tommy
+               password: 12345678
+               driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+            DBTMTP:
+               url: jdbc:sqlserver://127.0.0.1;database=DBTMTP
+               username: tommy
+               password: 12345678
+               driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+   mvc:
+      hiddenmethod:
+         filter:
+           enabled: true
+        
+   thymeleaf:
+      cache: false
+      mode: HTML
+      encoding: UTF-8
+   

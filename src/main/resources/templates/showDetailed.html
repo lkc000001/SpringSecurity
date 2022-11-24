@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW" xmlns:th="http://www.thymeleaf.org">
+	<head>
+	    <meta name="viewport" content="width=device-width" />
+	    <title>台灣企銀-日誌查詢系統詳細頁面</title>
+	
+	    <link rel="stylesheet" th:href="@{/jQuery-UI/jquery-ui-1.12.1.min.css}" >
+	    <link rel="stylesheet" th:href="@{/jQuery-UI/jquery-ui.theme-1.12.1.min.css}" >
+	    <link rel="stylesheet" th:href="@{/Font-Awesome/css/all.css}" >
+	    <link rel="stylesheet" th:href="@{/Bootstrap/bootstrap.min.css}" >
+	    <link rel="stylesheet" th:href="@{/overlayScrollbars/OverlayScrollbars.min.css}" >
+	    <link rel="stylesheet" th:href="@{/AdminLTE/adminlte-3.1.0.min.css}" >
+	    <link rel="stylesheet" th:href="@{/jsgrid/jsgrid.min.css}" >
+	    <link rel="stylesheet" th:href="@{/jsgrid/jsgrid-theme.min.css}" >
+	    <link rel="stylesheet" th:href="@{/CSS/style.css}" >
+	
+	</head>
+	<body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed sidebar-collapseX" style="height: auto;">
+		<div class="wrapper">
+		    <div th:include="header :: header"></div>
+
+			<div th:include="navBar :: header"></div>
+		
+		    <div class="content-wrapper">
+				<div class="main-content">
+					<div class="main-title">
+						<span class="title-text">詳細頁面</span>
+					</div>
+					
+					<div id="bobyhtml">
+						
+					</div>
+
+					<div class="pagebtn">
+						<div class="btn  newbtn-gray" onclick="doreturn();">返回</div>
+					</div>
+			
+				</div>
+			</div>
+			
+			<!--（Modal） -->
+			<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal" id="btnModal" style="display: none;"></button>
+		
+			<!-- Modal -->
+			<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalScrollableTitle" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-scrollable">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h4 class="modal-title" id="myModalLabel"></h4>
+						</div>
+						
+						<div class="wordWrap modal-body" id="myModalBoby"></div>
+						
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" onclick="copyEvent('myModalBoby')" >Copy</button>
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+						</div>
+					</div>
+				</div>
+			</div>
+			
+			<div th:include="footer :: footer"></div>
+			
+		</div>
+
+	 	<script th:src="@{/jQuery/jquery-3.6.0.min.js}"></script>
+		<script th:src="@{/jQuery-UI/jquery-ui-1.12.1.min.js}"></script>
+		<script th:src="@{/Bootstrap/bootstrap.bundle.min.js}"></script>
+		<script th:src="@{/overlayScrollbars/jquery.overlayScrollbars.min.js}"></script>
+		<script th:src="@{/AdminLTE/adminlte-3.1.0.min.js}"></script>
+		<script th:src="@{/JS/all.js}"></script>
+		<script th:src="@{/JS/apiGLUtil.js}"></script>
+		
+		<script th:inline="javascript">
+		
+			var data = /*[[${detailedresp}]]*/ 
+			//console.log(data)
+			
+			window.onload = function(){
+				document.getElementById("bobyhtml").innerHTML = creatTable(data,0);
+			}
+			//產生顯示的table
+			function creatTable(dataJson, index) {
+				let myObj = JSON.parse(dataJson);
+				
+				let text = "";
+				if(index == 0){
+					text = "<table class='sdtable'>"
+					text += "<tr><th width=20%> KEY </th> <th width=80%> VALUE </th></tr>";
+				} else {
+					text = "<table class='subtable'>"
+				}
+				for (key in myObj) {
+					if(key != 'pageIndex' && key != 'pageSize' && key != 'sortField' && key != 'sortOrder' && key != 'showDate' && key != 'showTime') {
+						//檢查是否為JSON
+						if(isJson(myObj[key])) {
+							//JSON中的JSON或陣列需另外處理
+							if (typeof myObj[key] == "object") {
+								//檢查是否為陣列
+								if(isArray(myObj[key])) {
+									let arrayObj = myObj[key];
+									text += "<tr><td class='key' width=20%><font size='4'>" + key +  "</font></td><td width=80%>";
+									if(arrayObj.length > 0) {
+										text += "<table class='subtable'><tr><td width=20%></td>";
+											//設定陣列title
+											for(titlevaluekey in arrayObj[0]) {
+												text += "<td width=40%><font size='4'>" + titlevaluekey +  "</font></td>";
+											}
+											//設定陣列value
+											for(arraykey in arrayObj) {
+												text += "<tr><td width=20%><font size='4'>" + arraykey +  "</font></td>";
+												for(valuekey in arrayObj[arraykey]) {
+													text += "<td class='table-ellipsis' width=40%><font size='4'>" + arrayObj[arraykey][valuekey] + "</font></td>";
+												} 
+												text += "</tr>";
+											}
+										text += "</td></tr></table>";
+									}
+									text += "</td>";
+								} else {
+									text += "<tr><td class='subtable-key' width=30%><font size='4'>" + key +  "</font></td><td class='table-ellipsis' width=70%>" + creatTable(JSON.stringify(myObj[key]), 1) + "</td></tr>";
+								}
+							} else {
+								text += "<tr><td class='subtable-key' width=30%><font size='4'>" + key +  "</font></td><td class='table-ellipsis' width=70%>" + creatTable(myObj[key], 1) + "</td></tr>";
+							}
+						} else {
+							text += "<tr><td class='subtable-key' width=20%><font size='4'>" + key +  "</font></td><td class='table-ellipsis' width=80% onclick=doshow(this.innerText)>" + myObj[key] + "</td></tr>";
+						}
+					}
+				}
+				text += "</table>"
+				return text;
+			}
+			
+			//回上一頁
+			function doreturn() {
+				history.back();
+			}
+			
+			//顯示過長的json內容
+			function doshow(element) {
+				if(element.length > 45) {
+					document.getElementById("myModalLabel").innerHTML = "詳細資訊";
+					document.getElementById("myModalBoby").innerHTML = element;
+					document.getElementById("btnModal").click();
+				}
+			}
+
+		</script>
+	</body>
+</html>

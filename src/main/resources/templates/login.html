@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	  xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+	<meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="stylesheet" th:href="@{/jQuery-UI/jquery-ui-1.12.1.min.css}" >
+	<link rel="stylesheet" th:href="@{/jQuery-UI/jquery-ui.theme-1.12.1.min.css}" >
+	<link rel="stylesheet" th:href="@{/Font-Awesome/css/all.css}" >
+	<link rel="stylesheet" th:href="@{/Bootstrap/bootstrap.min.css}" >
+    <link rel="stylesheet" th:href="@{/loaders/loaders.min.css}" >  
+    <link rel="stylesheet" th:href="@{/CSS/normalize.css}">
+    <link rel="stylesheet" th:href="@{/CSS/style.css}">
+    <link rel="stylesheet" th:href="@{/CSS/login.css}">
+    
+    <title>登入畫面</title>
+</head>
+
+<body>
+	<div class="whitebg">
+        <div class="logo">
+            <img src="" alt="">
+        </div>
+        <div class="s-title">
+            <span class="s-txt">登入系統</span>
+        </div>
+        <form id="loginForm" name="loginForm" method="post" th:action="@{/loginAction}">
+	        <div id="inputdiv">
+	            <div class="inputblock">
+	                <label for="username">使用者名稱：</label>
+	                <input type="text" id="username" name="username">
+	            </div>
+	    
+	            <div class="inputblock">
+	                <label for="password">使用者密碼：</label>
+	                <input type="password" id="password" name="password" maxlength="20">
+	            </div>
+ 
+	            <div class="inputblock" id="authCode">
+	                <label for="code">輸入驗證碼：</label>
+	                <input type="text" id="usercode" name="imageCode" class="inputcode" maxlength="4">
+	                <div class="codeimg">
+	                	<img id="authCodeImage" />
+	                </div>
+	                <i class="fa-solid fa-rotate" onclick="doauthCode();"></i>
+	            </div>
+    		</div>
+
+			<div class="container">
+			      <div class="loader-inner ball-spin-fade-loader" id="loaderdiv"></div>
+			</div>
+			<div class="error" th:if="${param.error}" th:text="${session.SPRING_SECURITY_LAST_EXCEPTION.message}"></div>
+
+			<div class="error" id="error" >
+				<br>
+            	<br>
+            </div>
+			
+            <div id="btndiv" class="loginbtn">
+                <a  class="btn lg newbtn-gray" onclick="doClear();">清除</a>
+				&nbsp;
+                <a class="btn lg newbtn-yellow" onclick="doLogin();">登入</a>
+            </div>
+            <div id="returnEportal" class="eportalbtn">
+            	<a class="btn lg newbtn-yellow" onclick="location.href='/logout';">返回Eportal</a>
+            </div>
+        </form>
+    </div>
+    
+    <script th:src="@{/jQuery/jquery-3.6.0.min.js}"></script>
+	<script th:src="@{/jQuery-UI/jquery-ui-1.12.1.min.js}"></script>
+    <script th:src="@{/Bootstrap/bootstrap.bundle.min.js}"></script>
+    <script th:src="@{/JS/apiGLUtil.js}"></script>
+    <script th:src="@{/aes/aes.js}"></script> 
+    <script th:src="@{/cdnjs/sjcl.js}"></script> 
+    <script th:src="@{/loaders/loaders.css.js}"></script> 
+    
+    <script th:inline="javascript">
+  		//產生驗證碼
+		doauthCode(); 
+  		
+		function doauthCode() {
+			let authurl = /*[[@{/code/image?}]]*/'';
+			//console.log(authurl)
+			document.getElementById("authCodeImage").src = authurl + Math.random();
+		}
+		
+		function doLogin() {
+			if (checkData()) {
+				document.loginForm.submit();
+			 }
+		}
+		
+		//清除查詢資料
+		function doClear() {
+			document.getElementById("account").value = null;
+			document.getElementById("pwd").value = null;
+			document.getElementById("usercode").value = null;
+		}
+		
+		//檢查欄位是否為空白
+		function checkData() {
+			if (document.getElementById("username").value == '') {
+				document.getElementById("error").innerHTML = "帳號不能為空白 <br> &nbsp;";
+				return false;
+			};
+			
+			if (document.getElementById("password").value == '') {
+				document.getElementById("error").innerHTML = "密碼不能為空白 <br> &nbsp;";
+				return false;
+			};
+			
+			if (document.getElementById("usercode").value == '') {
+				document.getElementById("error").innerHTML = "驗證碼不能為空白 <br> &nbsp;";
+				return false;
+			};
+			
+			if (document.getElementById("usercode").value.length < 4) {
+				document.getElementById("error").innerHTML = "驗證碼輸入錯誤 <br> &nbsp;";
+				return false;
+			};
+			return true;
+		}
+		
+    </script>
+</body>
+</html>

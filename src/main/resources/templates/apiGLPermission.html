@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+	<head>
+    	<meta name="viewport" content="width=device-width" />
+	    <title>權限設定</title>
+	
+	    <link rel="stylesheet" th:href="@{/jQuery-UI/jquery-ui-1.12.1.min.css}" >
+	    <link rel="stylesheet" th:href="@{/jQuery-UI/jquery-ui.theme-1.12.1.min.css}" >
+	    <link rel="stylesheet" th:href="@{/Font-Awesome/css/all.css}" >
+	    <link rel="stylesheet" th:href="@{/Bootstrap/bootstrap.min.css}" >
+	    <link rel="stylesheet" th:href="@{/overlayScrollbars/OverlayScrollbars.min.css}" >
+	    <link rel="stylesheet" th:href="@{/AdminLTE/adminlte-3.1.0.min.css}" >
+	    <link rel="stylesheet" th:href="@{/jsgrid/jsgrid.min.css}" >
+	    <link rel="stylesheet" th:href="@{/jsgrid/jsgrid-theme.min.css}" >
+	    <link rel="stylesheet" th:href="@{/CSS/style.css}" >
+	    
+	</head>
+	<body class="sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed sidebar-collapseX sidebar-collapse" style="height: auto;">
+		<div class="wrapper">
+		
+		    <div th:include="header :: header"></div>
+
+			<div th:include="navBar :: header"></div>
+	
+		    <div class="content-wrapper">
+		        <div class="main-content">
+		            <div class="main-title">
+		                <span class="title-text" id="showtitle">權限設定</span>
+		            </div>
+		
+		            <!-- 搜尋bar -->
+		            <form id="RoleForm" class="controlhidden">
+			            <div class="search-block">
+				            <div class="search-block-line">
+			                        <label>
+			                            <span class="text">索　　引：</span>
+			                            <input type="text" id="apiglRoleId" name="apiglRoleId" th:value="${apiglrole.apiglRoleId}" disabled="true">
+			                        </label>
+			                </div>
+			                <div class="search-block-line">
+			                    <div>
+			                        <label>
+			                            <span class="text" >編　　號：</span>
+			                            <input type="text" id="apiglRoleNumber" name="apiglRoleNumber" th:value="${apiglrole.apiglRoleNumber}" disabled="true">
+			                        </label>
+			                        &nbsp;&nbsp;&nbsp;
+			                        <label>
+			                            <span class="text" >名　　稱：</span>
+			                            <input type="text" id="apiglRoleName" name="apiglRoleName" th:value="${apiglrole.apiglRoleName}" disabled="true">
+			                        </label>
+			                    </div>
+			                </div>
+			                <div class="search-block-line">
+			                    <div>
+			                        <label>
+			                            <span class="text" >說　　明：</span>
+			                            <input type="text" id="apiglRoleDirections" name="apiglRoleDirections" th:value="${apiglrole.apiglRoleDirections}" disabled="true">
+			                        </label>
+			                        &nbsp;&nbsp;&nbsp;
+			                        <label>
+			                            <span class="text" >帳號種類：</span>
+			                            <select id="apiglRoleType" name="apiglRoleType" th:field="${apiglrole.apiglRoleType}" disabled="true">
+										    <option value="1">總行群組</option>
+										    <option value="2">分行群組</option>
+										    <option value="3">資訊部群組</option>
+										    <option value="4">分行OTP發卡行</option>
+										</select>
+			                        </label>
+			                    </div>
+			                </div>
+			                <div class="search-block-line">
+			                    <div>
+			                        <label>
+			                            <span class="text">啟　　用：</span>
+			                            <select id="enabled" name="enabled" th:field="${apiglrole.enabled}" disabled="true">
+										    <option value="0">未啟用</option>
+										    <option value="1">啟用</option>
+										</select>
+			                        </label>
+			                    </div>
+			                </div>
+			            </div>
+		            </form>
+					<form id="userForm" class="controlhidden">
+			            <div class="search-block">
+				            <div class="search-block-line">
+		                       	<label>
+		                            <span class="text" >索　　引：</span>
+		                            <input type="text" id="userId" th:value="${user.userId}" disabled="true">
+		                        </label>
+			                </div>
+			                <div class="search-block-line">
+			                    <div>
+			                        <label>
+			                            <span class="text" >帳號名稱：</span>
+			                            <input type="text" id="account" th:value="${user.account}" disabled="true">
+		                        	</label>
+			                        &nbsp;&nbsp;&nbsp;
+			                        <label>
+			                            <span class="text" >帳號序號：</span>
+			                            <input type="text" id="accountId" th:value="${user.accountId}" disabled="true">
+			                        </label>
+			                    </div>
+			                </div>
+			                <div class="search-block-line">
+			                    <div>
+			                        <label>
+			                            <span class="text" >姓　　名：</span>
+			                            <input type="text" id="name" th:value="${user.name}" disabled="true">
+			                        </label>
+			                        &nbsp;&nbsp;&nbsp;
+			                        <label>
+			                            <span class="text" >群組名稱：</span>
+			                             <input type="text" id="groupName" th:value="${user.groupName}" disabled="true">         
+			                        </label>
+			                    </div>
+			                </div>
+			                <div class="search-block-line">
+			                    <div>
+			                    	<label>
+			                            <span class="text">分行/部門代碼：</span>
+			                             <input type="text" id="branch" th:value="${user.branch}" disabled="true">
+			                        </label>
+			                        &nbsp;&nbsp;&nbsp;
+			                        <label>
+			                            <span class="text">啟　　用：</span>
+			                            <select id="userenabled" th:field="${user.enabled}" disabled="true">
+										    <option value="0">未啟用</option>
+										    <option value="1">啟用</option>
+										</select>
+			                        </label>
+			                    </div>
+			                </div>
+			            </div>
+		            </form>
+		            
+		            <form id="myForm" name="myForm" method="POST" action="<%=request.getContextPath()%>/apiGLPermission/get">
+			            <div class="search-block mt-3">
+			            
+			                <table class="permtable mt-3" id="myTable" name="myTable">
+			                	<thead>
+									<tr>
+										<th width=10%>序號</th><th width=30%>功能</th><th width=10%>啟用</th>
+										<th width=10%>序號</th><th width=30%>功能</th><th width=10%>啟用</th>
+									</tr>
+								</thead>
+				                <tbody id="formvalue"></tbody>
+			                </table>
+			                <div class="search-block-line btnventer">
+			                	<div class="btn searchbtn newbtn-gray" onclick="doreturn();">返回</div>
+			                    &nbsp;&nbsp;
+			                    <div class="btn searchbtn newbtn-yellow" onclick="doupdate();">修改</div>
+			                </div>
+			            </div>
+		            </form>
+		        </div>
+		    </div>
+		
+			<div th:include="util :: header"></div>
+
+			<div th:include="footer :: footer"></div>
+		</div>
+	
+		<script th:src="@{/jQuery/jquery-3.6.0.min.js}"></script>
+		<script th:src="@{/jQuery-UI/jquery-ui-1.12.1.min.js}"></script>
+		<script th:src="@{/Bootstrap/bootstrap.bundle.min.js}"></script>
+		<script th:src="@{/overlayScrollbars/jquery.overlayScrollbars.min.js}"></script>
+		<script th:src="@{/AdminLTE/adminlte-3.1.0.min.js}"></script>
+		<script th:src="@{/jsgrid/jsgrid.min.js}"></script>
+		<script th:src="@{/JS/all.js}"></script>
+		<script th:src="@{/JS/apiGLUtil.js}"></script>
+		
+		<script th:inline="javascript">
+		
+		
+			var funcname = /*[[${funcname}]]*/'';
+			var permission = /*[[${permission}]]*/'';
+			
+			if(funcname == 'role') {
+			    document.getElementById("formvalue").innerHTML = permission;
+			    document.getElementById("RoleForm").style.display = 'block';
+			} else {
+				document.getElementById("formvalue").innerHTML = permission;
+				document.getElementById("userForm").style.display = 'block';
+			}
+			
+			function getTableData() {
+				let arrData=[];  
+				$("#myTable tr").each(function(){
+				    let currentRow=$(this);
+				    let apiglroleid = /*[[${apiglrole.apiglRoleId}]]*/'';
+				    let userid = /*[[${user.userId}]]*/'';
+				    let col1_apiglfunctionid = currentRow.find("td:eq(0)").text();
+				    let col1_apiglfunctionname = currentRow.find("td:eq(1)").text();
+				    let col1_permissionenabled = 0;
+				    let col1permval = currentRow.find("td:eq(2) input:checkbox");  
+				    if($(col1permval).prop('checked')) {
+				    	col1_permissionenabled = 1;
+				    }
+				    if(col1_apiglfunctionid != '') {
+				    	let obj={};
+				    	if(funcname == 'role') {
+				    		obj.apiglRoleId = apiglroleid;
+				    	} else {
+				    		obj.userId = userid;
+				    	}
+					    obj.apiglFunctionId = col1_apiglfunctionid;
+					    obj.enabled = col1_permissionenabled ;
+					    arrData.push(obj);
+				    }
+				    
+				    let col2_apiglfunctionid = currentRow.find("td:eq(3)").text();
+				    let col2_apiglfunctionname = currentRow.find("td:eq(4)").text();
+				    let col2_permissionenabled = 0;
+				    let col2permval = currentRow.find("td:eq(5) input:checkbox");  
+				    if($(col2permval).prop('checked')) {
+				    	col2_permissionenabled = 1;
+				    }
+				    if(col2_apiglfunctionid != '') {
+				    	let obj={};
+				    	if(funcname == 'role') {
+				    		obj.apiglRoleId = apiglroleid;
+				    	} else {
+				    		obj.userId = userid;
+				    	}
+					    obj.apiglFunctionId = col2_apiglfunctionid;
+					    obj.enabled = col2_permissionenabled ;
+					    arrData.push(obj);
+				    }
+				});
+			  return arrData;
+			  
+			}
+
+			//錯誤訊息顯示
+			function errorMsg(title, msg) {
+				document.getElementById("myModalLabel").innerHTML = title;
+				document.getElementById("myModalBoby").innerHTML = msg;
+				document.getElementById("btnModal").click();
+			}
+			
+			function doupdate() {
+				let updateUrl = /*[[@{/apiGLPermission/}]]*/'';
+				console.log(updateUrl+ funcname + '/update');
+				$.ajax({
+                    url: updateUrl + funcname + '/update',
+                    dataType: "json",
+        		    contentType:"application/json; charset=utf-8",
+                    type: 'POST',
+                    data: JSON.stringify(getTableData()),
+                    error: function(error) {
+                    	errorMsg("錯誤", error.responseJSON.message);
+                    },
+                    success: function(data) {
+                    	errorMsg("結果", data.message);
+                    }
+                })
+			}
+			
+			function doreturn() {
+				history.back();
+			}
+			
+		</script>
+	</body>
+</html>
