@@ -1,4 +1,4 @@
-package com.springSecurityDemo.entity;
+package com.springsecuritydemo.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -8,13 +8,13 @@ import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import com.springSecurityDemo.entity.request.JSGridFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.springsecuritydemo.entity.request.JSGridFilter;
 
 import lombok.Data;
 
 @Table("[USER]")	
-public @Data class User extends JSGridFilter implements Serializable,Cloneable {
+public @Data class User extends JSGridFilter implements Serializable {
 	
 	@Id
 	@Column("userid")
@@ -63,11 +63,6 @@ public @Data class User extends JSGridFilter implements Serializable,Cloneable {
 	
 	@Transient
 	private String shapwd;
-	
-	@Override
-	public Object clone() throws CloneNotSupportedException {
-		return super.clone();
-	}
 
 	public User(String branch, String groupName, Integer accountId, String account, String name, String enabled) {
 		super();

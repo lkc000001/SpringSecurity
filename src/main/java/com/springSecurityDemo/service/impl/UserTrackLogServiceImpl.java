@@ -1,4 +1,4 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import java.text.ParseException;
 import java.util.Comparator;
@@ -10,33 +10,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.springSecurityDemo.entity.UserTrackLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.exception.QueryNoDataException;
-import com.springSecurityDemo.repositories.UserTrackLogRepository;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.service.UserTrackLogService;
-import com.springSecurityDemo.util.DateTimtUtil;
-import com.springSecurityDemo.util.ValidateUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.springsecuritydemo.entity.UserTrackLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.repositories.UserTrackLogRepository;
+import com.springsecuritydemo.service.ServiceUtil;
+import com.springsecuritydemo.service.UserTrackLogService;
+import com.springsecuritydemo.util.ValidateUtil;
 
 @DS("DBAPIGL")
 @Service
 public class UserTrackLogServiceImpl implements UserTrackLogService {
 
 	@Autowired
-	UserTrackLogRepository userTrackLogRepository;
+	private UserTrackLogRepository userTrackLogRepository;
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
+	private ValidateUtil validateUtil;
 	
 	@Autowired
-	ValidateUtil validateUtil;
-	
-	@Autowired
-	ServiceUtil serviceUtil;
+	private ServiceUtil serviceUtil;
 	
 	/**
 	 * UserTrackLog Table依查詢條件查詢,依分頁及排序Response
@@ -45,26 +41,21 @@ public class UserTrackLogServiceImpl implements UserTrackLogService {
 	 * @throws ParseException 
 	 */
     @Override
-	public ResponseEntity<?> queryUserTrackLog(ConditionsRequest conditionsRequest) throws ParseException
+	public ResponseEntity<JSGridReturnData<UserTrackLog>> queryUserTrackLog(ConditionsRequest conditionsRequest) throws ParseException
 	{
 		serviceUtil.requestDateCheck(conditionsRequest);
 		Integer accountID = validateUtil.isBlank(conditionsRequest.getQueryUserId()) ? null : Integer.valueOf(conditionsRequest.getQueryUserId());
 		List<UserTrackLog> userTrackLogs = userTrackLogRepository.queryUserTrackLog(accountID, conditionsRequest.getStartDate(), 
-				 							conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryUrl());
-		//分頁,排序
+				 							conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryUrl(),
+				 							conditionsRequest.getPageIndex(), conditionsRequest.getPageSize());
+		
+		//排序
 		if(userTrackLogs.size() > 0 ) {
-			int pageSize = conditionsRequest.getPageSize();
 			List<UserTrackLog> result = userTrackLogs.stream()
-				.peek(lpm -> {
-						lpm.setShowDate(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "yyyy-MM-dd"));
-						lpm.setShowTime(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "HH:mm:ss"));
-					})
 				.sorted(userTrackLogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
-				.skip(pageSize * (conditionsRequest.getPageIndex() - 1))
-				.limit(pageSize)
 				.collect(Collectors.toList());
 		
-			return new ResponseEntity<JSGridReturnData<UserTrackLog>>(JSGridResponse.getResponseData(result, userTrackLogs.size()), HttpStatus.OK);
+			return new ResponseEntity<>(JSGridResponse.getResponseData(result, userTrackLogRepository.count()), HttpStatus.OK);
 		} else {
 			throw new QueryNoDataException("查無資料!!!", 404);
 		}
@@ -77,7 +68,7 @@ public class UserTrackLogServiceImpl implements UserTrackLogService {
 	 */
     @Override
 	public UserTrackLog findByUserTrackId(Long userTrackId) {
-		return userTrackLogRepository.findById(userTrackId).get();
+		return serviceUtil.checkDataIsPresent(userTrackLogRepository.findById(userTrackId));
 	}
 	
     /**
@@ -109,10 +100,10 @@ public class UserTrackLogServiceImpl implements UserTrackLogService {
 			return sortOrder.equals("asc") ? 
 					Comparator.comparing(UserTrackLog::getUserTrackUrl) : 
 						Comparator.comparing(UserTrackLog::getUserTrackUrl).reversed();
-		}
-		
-		return sortOrder.equals("asc") ? 
+		default:
+			return sortOrder.equals("asc") ? 
 				Comparator.comparing(UserTrackLog::getUserTrackId) : 
 					Comparator.comparing(UserTrackLog::getUserTrackId).reversed();
+		}
 	}
 }

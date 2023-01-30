@@ -1,4 +1,4 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import java.text.ParseException;
 import java.util.Comparator;
@@ -10,29 +10,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.springSecurityDemo.entity.ApiGuiLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.exception.QueryNoDataException;
-import com.springSecurityDemo.repositories.ApiGuiLogRepository;
-import com.springSecurityDemo.service.ApiGuiLogService;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.util.DateTimtUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.springsecuritydemo.entity.ApiGuiLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.repositories.ApiGuiLogRepository;
+import com.springsecuritydemo.service.ApiGuiLogService;
+import com.springsecuritydemo.service.ServiceUtil;
 
 @DS("DBAPIGL")
 @Service
 public class ApiGuiLogServiceImpl implements ApiGuiLogService {
 
 	@Autowired
-	ApiGuiLogRepository apiGuiLogRepository;
+	private ApiGuiLogRepository apiGuiLogRepository;
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
-	
-	@Autowired
-	ServiceUtil serviceUtil;
+	private ServiceUtil serviceUtil;
 	
 	/**
 	 * ApiGuiLog Table依查詢條件查詢,依分頁及排序Response
@@ -41,28 +37,22 @@ public class ApiGuiLogServiceImpl implements ApiGuiLogService {
 	 * @throws ParseException 
 	 */
     @Override
-	public ResponseEntity<?> queryApiGuiLog(ConditionsRequest conditionsRequest) throws ParseException
+	public ResponseEntity<JSGridReturnData<ApiGuiLog>> queryApiGuiLog(ConditionsRequest conditionsRequest) throws ParseException
 	{
-		serviceUtil.requestDateCheck(conditionsRequest);
+serviceUtil.requestDateCheck(conditionsRequest);
 		
 		List<ApiGuiLog> apiGuiLogs = apiGuiLogRepository.queryApiGuiLog(conditionsRequest.getQueryUserId(), conditionsRequest.getStartDate(), 
 									 conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryType(), 
-									 conditionsRequest.getQueryUrl());
+									 conditionsRequest.getQueryUrl(), conditionsRequest.getPageIndex(), conditionsRequest.getPageSize());
 		
-		//分頁,排序
-		if(apiGuiLogs.size() > 0 ) {
-			int pageSize = conditionsRequest.getPageSize();
+		//排序
+		int count = apiGuiLogs.size();
+		if(count > 0 ) {
 			List<ApiGuiLog> result = apiGuiLogs.stream()
-				.peek(lpm -> {
-						lpm.setShowDate(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "yyyy-MM-dd"));
-						lpm.setShowTime(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "HH:mm:ss"));
-				})
 				.sorted(apiGuiLogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
-				.skip(pageSize * (conditionsRequest.getPageIndex() - 1))
-				.limit(pageSize)
 				.collect(Collectors.toList());
 			
-			return new ResponseEntity<JSGridReturnData<ApiGuiLog>>(JSGridResponse.getResponseData(result, apiGuiLogs.size()), HttpStatus.OK);
+			return new ResponseEntity<>(JSGridResponse.getResponseData(result, count), HttpStatus.OK);
 		} else {
 			throw new QueryNoDataException("查無資料!!!", 404);
 		}
@@ -75,7 +65,7 @@ public class ApiGuiLogServiceImpl implements ApiGuiLogService {
 	 */
     @Override
 	public ApiGuiLog findByApiGuiId(Long apiGuiId) {
-		return apiGuiLogRepository.findById(apiGuiId).get();
+    	return serviceUtil.checkDataIsPresent(apiGuiLogRepository.findById(apiGuiId));
 	}
 	
     /**
@@ -107,11 +97,11 @@ public class ApiGuiLogServiceImpl implements ApiGuiLogService {
 			return sortOrder.equals("asc") ? 
 					Comparator.comparing(ApiGuiLog::getApiGuiSendStatus) : 
 						Comparator.comparing(ApiGuiLog::getApiGuiSendStatus).reversed();
-		}
-		
-		return sortOrder.equals("asc") ? 
+		default:
+			return sortOrder.equals("asc") ? 
 				Comparator.comparing(ApiGuiLog::getApiGuiId) : 
 					Comparator.comparing(ApiGuiLog::getApiGuiId).reversed();
+		}
 	}
 	
 }

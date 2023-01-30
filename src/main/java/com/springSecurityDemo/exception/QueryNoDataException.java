@@ -1,8 +1,8 @@
-package com.springSecurityDemo.exception;
+package com.springsecuritydemo.exception;
 
 public class QueryNoDataException extends RuntimeException {
 	
-	private Integer code;
+	private final Integer code;
 	
 	public QueryNoDataException(String message, Integer code) {
 		super(message);
@@ -12,9 +12,4 @@ public class QueryNoDataException extends RuntimeException {
 	public Integer getCode() {
 		return code;
 	}
-
-	public void setCode(Integer code) {
-		this.code = code;
-	}
-	
 }

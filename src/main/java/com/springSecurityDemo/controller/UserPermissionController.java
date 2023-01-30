@@ -1,4 +1,4 @@
-package com.springSecurityDemo.controller;
+package com.springsecuritydemo.controller;
 
 import java.text.ParseException;
 
@@ -16,10 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.springSecurityDemo.entity.AppUser;
-import com.springSecurityDemo.service.UserService;
-import com.springSecurityDemo.util.ValidateUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.springsecuritydemo.entity.AppUser;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.service.UserService;
+import com.springsecuritydemo.util.ValidateUtil;
 
 @Controller
 @RequestMapping(value = "/userPermission")
@@ -45,7 +46,7 @@ public class UserPermissionController {
 	 * @throws ParseException 
 	 */
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> queryUserPermission(@RequestBody AppUser user) throws ParseException {
+	public ResponseEntity<JSGridReturnData<AppUser>> queryUserPermission(@RequestBody AppUser user) throws ParseException {
 		return userService.queryUserPermission(user);
     }
 
@@ -63,7 +64,7 @@ public class UserPermissionController {
 	 */
     @PostMapping(path = "/save", consumes = "application/json", produces = "application/json")
 	@ResponseBody
-    public ResponseEntity<?> add(final Authentication authentication, @RequestBody AppUser user) {
+    public ResponseEntity<String> add(final Authentication authentication, @RequestBody AppUser user) {
     	String respMsg = userService.save(user, "新增", authentication);
     	return new ResponseEntity<>("{\"message\": \"" + respMsg + "\"}",HttpStatus.OK);
     }
@@ -76,7 +77,7 @@ public class UserPermissionController {
      */
     @PutMapping(path = "/save", consumes = "application/json", produces = "application/json")
     @ResponseBody
-    public ResponseEntity<?> update(final Authentication authentication, @RequestBody AppUser user) {
+    public ResponseEntity<String> update(final Authentication authentication, @RequestBody AppUser user) {
     	String respMsg = userService.save(user, "修改", authentication);
     	return new ResponseEntity<>("{\"message\": \"" + respMsg + "\"}",HttpStatus.OK);
     }

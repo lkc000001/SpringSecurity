@@ -1,4 +1,4 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import java.text.ParseException;
 import java.util.Comparator;
@@ -11,28 +11,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.springSecurityDemo.entity.IcpApiLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.exception.QueryNoDataException;
-import com.springSecurityDemo.repositories.IcpApiLogRepository;
-import com.springSecurityDemo.service.IcpApiLogService;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.util.DateTimtUtil;
+import com.springsecuritydemo.entity.IcpApiLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.repositories.IcpApiLogRepository;
+import com.springsecuritydemo.service.IcpApiLogService;
+import com.springsecuritydemo.service.ServiceUtil;
 
 @DS("DBTICP")
 @Service
 public class IcpApiLogServiceImpl implements IcpApiLogService {
 
 	@Autowired
-	IcpApiLogRepository icpAPILogRepository;
+	private IcpApiLogRepository icpAPILogRepository;
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
-	
-	@Autowired
-	ServiceUtil serviceUtil;
+	private ServiceUtil serviceUtil;
 	
 	/**
 	 * IcpApiLog Table依查詢條件查詢,依分頁及排序Response
@@ -41,27 +37,21 @@ public class IcpApiLogServiceImpl implements IcpApiLogService {
 	 * @throws ParseException 
 	 */
     @Override
-	public ResponseEntity<?> queryIcpApiLog(ConditionsRequest conditionsRequest) throws ParseException
+	public ResponseEntity<JSGridReturnData<IcpApiLog>> queryIcpApiLog(ConditionsRequest conditionsRequest) throws ParseException
 	{
-		serviceUtil.requestDateCheck(conditionsRequest);
+serviceUtil.requestDateCheck(conditionsRequest);
 		
 		List<IcpApiLog> icpApiLogs = icpAPILogRepository.queryIcpApiLog(conditionsRequest.getQueryUserId(), conditionsRequest.getStartDate(), 
 									 conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryType(), 
-									 conditionsRequest.getQueryUrl());
-		if(icpApiLogs.size() > 0 ) {
-			//分頁,排序
-			int pageSize = conditionsRequest.getPageSize();
+									 conditionsRequest.getQueryUrl(), conditionsRequest.getPageIndex(), conditionsRequest.getPageSize());
+		int count = icpApiLogs.size();
+		if(count > 0 ) {
+			//排序
 			List<IcpApiLog> result = icpApiLogs.stream()
-				.peek(lpm -> {
-						lpm.setShowDate(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "yyyy-MM-dd"));
-						lpm.setShowTime(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "HH:mm:ss"));
-					})
 				.sorted(icpApiLogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
-				.skip(pageSize * (conditionsRequest.getPageIndex() - 1))
-				.limit(pageSize)
 				.collect(Collectors.toList());
 			
-			return new ResponseEntity<JSGridReturnData<IcpApiLog>>(JSGridResponse.getResponseData(result, icpApiLogs.size()), HttpStatus.OK);
+			return new ResponseEntity<>(JSGridResponse.getResponseData(result, count), HttpStatus.OK);
 		} else {
 			throw new QueryNoDataException("查無資料!!!", 404);
 		}
@@ -74,7 +64,7 @@ public class IcpApiLogServiceImpl implements IcpApiLogService {
 	 */
     @Override
 	public IcpApiLog findByicpId(Long icpId) {
-		return icpAPILogRepository.findById(icpId).get();
+		return serviceUtil.checkDataIsPresent(icpAPILogRepository.findById(icpId));
 	}
 	
 	/**
@@ -93,10 +83,12 @@ public class IcpApiLogServiceImpl implements IcpApiLogService {
 			return sortOrder.equals("asc") ? 
 					Comparator.comparing(IcpApiLog::getIcpType) : 
 						Comparator.comparing(IcpApiLog::getIcpType).reversed();
-		}
-		
-		return sortOrder.equals("asc") ? 
+		default:
+			return sortOrder.equals("asc") ? 
 				Comparator.comparing(IcpApiLog::getIcpId) : 
 					Comparator.comparing(IcpApiLog::getIcpId).reversed();
+		}
+		
+		
 	}
 }

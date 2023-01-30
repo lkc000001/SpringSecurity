@@ -1,8 +1,6 @@
-package com.springSecurityDemo.util;
+package com.springsecuritydemo.util;
 
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -25,14 +23,12 @@ public class DateTimtUtil {
 	
 	public Date formatStrToDate(String dateStr) throws ParseException {
 		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS");
-		Date date = dateFormat.parse(dateStr);
-		return date;
+		return dateFormat.parse(dateStr);
 	}
 	
 	public String formatDateToStr(Date dateStr, String format) {
 		SimpleDateFormat dateFormat = new SimpleDateFormat(format);
-		String date = dateFormat.format(dateStr);
-		return date;
+		return dateFormat.format(dateStr);
 	}
 	
 
@@ -42,19 +38,21 @@ public class DateTimtUtil {
 		case 1:
 			rexp = "^\\d{4}/\\d{2}/\\d{2}$";
 			break;
+		default:
+			rexp = "";
 		}
 		
 		Pattern pattern = Pattern.compile(rexp);
         return pattern.matcher(date).matches();
     }
 	
-	public boolean checkTimeFormat(String StartTime, String endTime) {
+	public boolean checkTimeFormat(String startTime, String endTime) {
         
-		if(!isTime(StartTime) || !isTime(endTime)) {
+		if(!isTime(startTime) || !isTime(endTime)) {
 			return false;
 		}
 		
-		if(Integer.parseInt(StartTime.replace(":", "")) > Integer.parseInt(endTime.replace(":", ""))) {
+		if(Integer.parseInt(startTime.replace(":", "")) > Integer.parseInt(endTime.replace(":", ""))) {
 			return false;
 		}
         

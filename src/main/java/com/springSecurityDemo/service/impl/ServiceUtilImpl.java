@@ -1,26 +1,29 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 
 import java.text.ParseException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.exception.TimeFormatException;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.util.DateTimtUtil;
-import com.springSecurityDemo.util.ValidateUtil;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.exception.TimeFormatException;
+import com.springsecuritydemo.service.ServiceUtil;
+import com.springsecuritydemo.util.DateTimtUtil;
+import com.springsecuritydemo.util.ValidateUtil;
 
 
 @Service
 public class ServiceUtilImpl implements ServiceUtil {
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
+	private DateTimtUtil dateTimtUtil;
 	
 	@Autowired
-	ValidateUtil validateUtil;
+	private ValidateUtil validateUtil;
 	
 	@Override
 	public void requestDateCheck(ConditionsRequest conditionsRequest) throws ParseException {
@@ -47,5 +50,13 @@ public class ServiceUtilImpl implements ServiceUtil {
 		conditionsRequest.setQueryData(queryData);
 		String queryUrl =  validateUtil.isBlank(conditionsRequest.getQueryUrl()) ? "" : "%" + conditionsRequest.getQueryUrl() + "%";
 		conditionsRequest.setQueryUrl(queryUrl);
+	}
+
+	@Override
+	public <T> T checkDataIsPresent(Optional<T> data) {
+		if (!data.isPresent()) {
+    		throw new QueryNoDataException("查無資料!!!", 404);
+    	}
+		return data.get();
 	}
 }

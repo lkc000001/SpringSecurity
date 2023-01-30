@@ -1,4 +1,4 @@
-package com.springSecurityDemo.controller;
+package com.springsecuritydemo.controller;
 
 import java.text.ParseException;
 
@@ -13,11 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.service.TwPayLineBindLogService;
+import com.springsecuritydemo.entity.TwPayLineBindLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.service.TwPayLineBindLogService;
 
 @Controller
 @RequestMapping(value = "/twPayLineBindLog")
@@ -41,7 +41,7 @@ public class TwPayLineBindLogController {
 	 */
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<?> queryTwPayLineBindLog(HttpSession session, @RequestBody ConditionsRequest conditionsRequest) throws ParseException {
+	public ResponseEntity<JSGridReturnData<TwPayLineBindLog>> queryTwPayLineBindLog(HttpSession session, @RequestBody ConditionsRequest conditionsRequest) throws ParseException {
 		return twPayLineBindLogService.querytwPayLineBindLog(conditionsRequest);
     }
 	

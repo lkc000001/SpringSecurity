@@ -1,4 +1,4 @@
-package com.springSecurityDemo.entity.response;
+package com.springsecuritydemo.entity.response;
 
 import lombok.Data;
 

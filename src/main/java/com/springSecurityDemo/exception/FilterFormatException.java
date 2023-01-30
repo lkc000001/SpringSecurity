@@ -1,10 +1,10 @@
 package com.springsecuritydemo.exception;
 
-public class AesException extends RuntimeException {
+public class FilterFormatException extends RuntimeException {
 	
 	private final Integer code;
 	
-	public AesException(String message, Integer code) {
+	public FilterFormatException(String message, Integer code) {
 		super(message);
 		this.code = code;
 	}
@@ -12,5 +12,4 @@ public class AesException extends RuntimeException {
 	public Integer getCode() {
 		return code;
 	}
-	
 }

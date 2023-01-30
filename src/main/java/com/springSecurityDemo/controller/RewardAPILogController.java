@@ -1,4 +1,4 @@
-package com.springSecurityDemo.controller;
+package com.springsecuritydemo.controller;
 
 import java.text.ParseException;
 
@@ -12,10 +12,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.service.RewardApiLogService;
+import com.springsecuritydemo.entity.RewardAPILog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.service.RewardApiLogService;
 
 @Controller
 @RequestMapping(value = "/rewardApiLog")
@@ -38,7 +39,7 @@ public class RewardAPILogController {
 	 * @throws ParseException 
 	 */
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> queryRewardApiLog(HttpSession session, @RequestBody ConditionsRequest conditionsRequest) throws ParseException {
+	public ResponseEntity<JSGridReturnData<RewardAPILog>> queryRewardApiLog(HttpSession session, @RequestBody ConditionsRequest conditionsRequest) throws ParseException {
 		return rewardAPILogService.queryRewardAPILog(conditionsRequest);
     }
 }

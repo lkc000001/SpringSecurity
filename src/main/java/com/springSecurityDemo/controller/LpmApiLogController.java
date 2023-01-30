@@ -1,29 +1,22 @@
-package com.springSecurityDemo.controller;
+package com.springsecuritydemo.controller;
 
 import java.text.ParseException;
-import java.util.List;
-
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.springSecurityDemo.entity.AppUser;
-import com.springSecurityDemo.entity.LpmApiLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.service.LpmApiLogService;
-import com.springSecurityDemo.service.UserService;
+import com.springsecuritydemo.entity.LpmApiLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.service.LpmApiLogService;
+import com.springsecuritydemo.service.UserService;
 
 @Controller
 @RequestMapping(value = "/lpmApiLog")
@@ -50,7 +43,7 @@ public class LpmApiLogController {
 	 */
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
 	@ResponseBody
-	public ResponseEntity<?> queryLpmApiLog(@RequestBody ConditionsRequest conditionsRequest) throws ParseException {
+	public ResponseEntity<JSGridReturnData<LpmApiLog>> queryLpmApiLog(@RequestBody ConditionsRequest conditionsRequest) throws ParseException {
 		return lpmApiLogService.queryLpmApiLog(conditionsRequest);
     }	
 }

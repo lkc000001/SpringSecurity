@@ -1,4 +1,4 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import java.text.ParseException;
 import java.util.Comparator;
@@ -11,28 +11,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.springSecurityDemo.entity.MtpApiLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.exception.QueryNoDataException;
-import com.springSecurityDemo.repositories.MtpApiLogRepository;
-import com.springSecurityDemo.service.MtpApiLogService;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.util.DateTimtUtil;
+import com.springsecuritydemo.entity.MtpApiLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.repositories.MtpApiLogRepository;
+import com.springsecuritydemo.service.MtpApiLogService;
+import com.springsecuritydemo.service.ServiceUtil;
 
 @DS("DBTMTP")
 @Service
 public class MtpApiLogServiceImpl implements MtpApiLogService {
 
 	@Autowired
-	MtpApiLogRepository mtpAPILogRepository;
+	private MtpApiLogRepository mtpAPILogRepository;
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
-	
-	@Autowired
-	ServiceUtil serviceUtil;
+	private ServiceUtil serviceUtil;
 	
 	/**
 	 * MtpApiLog Table依查詢條件查詢,依分頁及排序Response
@@ -41,27 +37,20 @@ public class MtpApiLogServiceImpl implements MtpApiLogService {
 	 * @throws ParseException 
 	 */
     @Override
-	public ResponseEntity<?> queryMtpApiLog(ConditionsRequest conditionsRequest) throws ParseException
+	public ResponseEntity<JSGridReturnData<MtpApiLog>> queryMtpApiLog(ConditionsRequest conditionsRequest) throws ParseException
 	{
 		serviceUtil.requestDateCheck(conditionsRequest);
-
-		List<MtpApiLog> mtpApiLogs = mtpAPILogRepository.queryMtpApiLog(conditionsRequest.getQueryUserId(), conditionsRequest.getStartDate(), 
-									 conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryType(), 
-									 conditionsRequest.getQueryUrl());
-		if(mtpApiLogs.size() > 0 ) {
-		//分頁,排序
-		int pageSize = conditionsRequest.getPageSize();
-		List<MtpApiLog> result = mtpApiLogs.stream()
-			.peek(lpm -> {
-					lpm.setShowDate(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "yyyy-MM-dd"));
-					lpm.setShowTime(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "HH:mm:ss"));
-				})
-			.sorted(mtpApiLogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
-			.skip(pageSize * (conditionsRequest.getPageIndex() - 1))
-			.limit(pageSize)
-			.collect(Collectors.toList());
 		
-			return new ResponseEntity<JSGridReturnData<MtpApiLog>>(JSGridResponse.getResponseData(result, mtpApiLogs.size()), HttpStatus.OK);
+		List<MtpApiLog> mtpApiLogs = mtpAPILogRepository.queryMtpApiLog(conditionsRequest.getQueryUserId(), conditionsRequest.getStartDate(), 
+				 conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryType(), 
+				 conditionsRequest.getQueryUrl(), conditionsRequest.getPageIndex(), conditionsRequest.getPageSize());
+		if(mtpApiLogs.size() > 0 ) {
+		//排序
+			List<MtpApiLog> result = mtpApiLogs.stream()
+					.sorted(mtpApiLogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
+					.collect(Collectors.toList());
+		
+			return new ResponseEntity<>(JSGridResponse.getResponseData(result, mtpAPILogRepository.count()), HttpStatus.OK);
 		} else {
 			throw new QueryNoDataException("查無資料!!!", 404);
 		}
@@ -74,7 +63,7 @@ public class MtpApiLogServiceImpl implements MtpApiLogService {
 	 */
     @Override
 	public MtpApiLog findBymtpLId(Long mtpLId) {
-		return mtpAPILogRepository.findById(mtpLId).get();
+		return serviceUtil.checkDataIsPresent(mtpAPILogRepository.findById(mtpLId));
 	}
     
 	/**
@@ -93,10 +82,10 @@ public class MtpApiLogServiceImpl implements MtpApiLogService {
 			return sortOrder.equals("asc") ? 
 					Comparator.comparing(MtpApiLog::getMtpBankCode) : 
 						Comparator.comparing(MtpApiLog::getMtpBankCode).reversed();
-		}
-		
-		return sortOrder.equals("asc") ? 
+		default:
+			return sortOrder.equals("asc") ? 
 				Comparator.comparing(MtpApiLog::getMtpLId) : 
 					Comparator.comparing(MtpApiLog::getMtpLId).reversed();
+		}
 	}
 }

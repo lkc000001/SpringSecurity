@@ -1,4 +1,4 @@
-package com.springSecurityDemo.controller;
+package com.springsecuritydemo.controller;
 
 import java.text.ParseException;
 
@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.service.SmsOtpLogService;
+import com.springsecuritydemo.entity.SmsOtpLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.service.SmsOtpLogService;
 
 @Controller
 @RequestMapping(value = "/smsOtpLog")
@@ -37,7 +39,7 @@ public class SmsOtpLogController {
 	 * @throws ParseException 
 	 */
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> querySmsOtpLog(HttpSession session, @RequestBody ConditionsRequest conditionsRequest) throws ParseException {
+	public ResponseEntity<JSGridReturnData<SmsOtpLog>> querySmsOtpLog(HttpSession session, @RequestBody ConditionsRequest conditionsRequest) throws ParseException {
 		return smsOtpLogService.querySmsOtpLog(conditionsRequest);
     }
 }

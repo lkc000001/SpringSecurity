@@ -1,4 +1,4 @@
-package com.springSecurityDemo.service;
+package com.springsecuritydemo.service;
 
 import java.text.ParseException;
 import java.util.List;
@@ -7,14 +7,17 @@ import java.util.Map;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
-import com.springSecurityDemo.entity.AppUser;
-import com.springSecurityDemo.entity.PermissionResponse;
+import com.springsecuritydemo.entity.AppUser;
+import com.springsecuritydemo.entity.PermissionResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
 
 public interface UserService {
 	
 	AppUser getSecurityUser(final Authentication authentication);
 	
-	ResponseEntity<?> queryUserPermission(AppUser user) throws ParseException;
+	String getSecurityUserName(final Authentication authentication);
+	
+	ResponseEntity<JSGridReturnData<AppUser>> queryUserPermission(AppUser user) throws ParseException;
 	
 	AppUser findByUserId(Long userId);
 	

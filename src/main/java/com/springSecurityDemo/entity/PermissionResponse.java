@@ -1,8 +1,10 @@
-package com.springSecurityDemo.entity;
+package com.springsecuritydemo.entity;
+
+import java.io.Serializable;
 
 import lombok.Data;
 
-public @Data class PermissionResponse {
+public @Data class PermissionResponse implements Serializable {
 	
 	private Long apiglroleid;
 	

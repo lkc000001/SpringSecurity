@@ -1,4 +1,4 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import java.text.ParseException;
 import java.util.Comparator;
@@ -10,29 +10,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.springSecurityDemo.entity.Hpg5000ApiLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.exception.QueryNoDataException;
-import com.springSecurityDemo.repositories.Hpg5000ApiLogRepository;
-import com.springSecurityDemo.service.Hpg5000ApiLogService;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.util.DateTimtUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.springsecuritydemo.entity.Hpg5000ApiLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.repositories.Hpg5000ApiLogRepository;
+import com.springsecuritydemo.service.Hpg5000ApiLogService;
+import com.springsecuritydemo.service.ServiceUtil;
 
 @DS("DBTOAPI")
 @Service
 public class Hpg5000ApiLogServiceImpl implements Hpg5000ApiLogService {
 
 	@Autowired
-	Hpg5000ApiLogRepository hpg5000ApiLogRepository;
+	private Hpg5000ApiLogRepository hpg5000ApiLogRepository;
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
-	
-	@Autowired
-	ServiceUtil serviceUtil;
+	private ServiceUtil serviceUtil;
 	
 	/**
 	 * Hpg5000ApiLog Table依查詢條件查詢,依分頁及排序Response
@@ -41,27 +37,20 @@ public class Hpg5000ApiLogServiceImpl implements Hpg5000ApiLogService {
 	 * @throws ParseException 
 	 */
     @Override
-	public ResponseEntity<?> queryHpg5000ApiLog(ConditionsRequest conditionsRequest) throws ParseException
+	public ResponseEntity<JSGridReturnData<Hpg5000ApiLog>> queryHpg5000ApiLog(ConditionsRequest conditionsRequest) throws ParseException
 	{
-		serviceUtil.requestDateCheck(conditionsRequest);
+serviceUtil.requestDateCheck(conditionsRequest);
 		
 		List<Hpg5000ApiLog> hpg5000ApiLogs = hpg5000ApiLogRepository.queryHpg5000ApiLog(conditionsRequest.getQueryUserId(), conditionsRequest.getStartDate(), 
 										 conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryType(), 
-										 conditionsRequest.getQueryUrl());
+										 conditionsRequest.getQueryUrl(), conditionsRequest.getPageIndex(), conditionsRequest.getPageSize());
 		if(hpg5000ApiLogs.size() > 0 ) {
-		//分頁,排序
-		int pageSize = conditionsRequest.getPageSize();
+		//排序
 		List<Hpg5000ApiLog> result = hpg5000ApiLogs.stream()
-			.peek(Hpg5000 -> {
-					Hpg5000.setShowDate(dateTimtUtil.formatDateToStr(Hpg5000.getCreatetime(), "yyyy-MM-dd"));
-					Hpg5000.setShowTime(dateTimtUtil.formatDateToStr(Hpg5000.getCreatetime(), "HH:mm:ss"));
-				})
 			.sorted(hpg5000ApiLogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
-			.skip(pageSize * (conditionsRequest.getPageIndex() - 1))
-			.limit(pageSize)
 			.collect(Collectors.toList());
 		
-			return new ResponseEntity<JSGridReturnData<Hpg5000ApiLog>>(JSGridResponse.getResponseData(result, hpg5000ApiLogs.size()), HttpStatus.OK);
+			return new ResponseEntity<>(JSGridResponse.getResponseData(result, hpg5000ApiLogRepository.count()), HttpStatus.OK);
 		} else {
 			throw new QueryNoDataException("查無資料!!!", 404);
 		}
@@ -74,7 +63,7 @@ public class Hpg5000ApiLogServiceImpl implements Hpg5000ApiLogService {
 	 */
     @Override
 	public Hpg5000ApiLog findByhpgLogId(Long hpgLogId) {
-		return hpg5000ApiLogRepository.findById(hpgLogId).get();
+		return serviceUtil.checkDataIsPresent(hpg5000ApiLogRepository.findById(hpgLogId));
 	}
 	
 	/**
@@ -96,11 +85,11 @@ public class Hpg5000ApiLogServiceImpl implements Hpg5000ApiLogService {
 		case "HPGLogTxnTime":
 			return sortOrder.equals("asc") ? 
 					Comparator.comparing(Hpg5000ApiLog::getHpgLogTxnTime) : 
-						Comparator.comparing(Hpg5000ApiLog::getHpgLogTxnTime).reversed();	
-		}
-		
-		return sortOrder.equals("asc") ? 
+						Comparator.comparing(Hpg5000ApiLog::getHpgLogTxnTime).reversed();
+		default:
+			return sortOrder.equals("asc") ? 
 				Comparator.comparing(Hpg5000ApiLog::getHpgLogId) : 
 					Comparator.comparing(Hpg5000ApiLog::getHpgLogId).reversed();
+		}
 	}
 }

@@ -1,18 +1,13 @@
-package com.springSecurityDemo.repositories;
+package com.springsecuritydemo.repositories;
 
-import java.util.Date;
-import java.util.List;
 import java.util.Set;
 
 import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
-import org.springframework.lang.Nullable;
 
-import com.springSecurityDemo.entity.PermissionResponse;
-import com.springSecurityDemo.entity.UserFunction;
+import com.springsecuritydemo.entity.PermissionResponse;
+import com.springsecuritydemo.entity.UserFunction;
 
 
 public interface UserFunctionRepository extends CrudRepository<UserFunction, Long>{	

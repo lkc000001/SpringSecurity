@@ -1,4 +1,4 @@
-package com.springSecurityDemo.entity;
+package com.springsecuritydemo.entity;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -7,8 +7,8 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
-import com.springSecurityDemo.entity.request.JSGridFilter;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.springsecuritydemo.entity.request.JSGridFilter;
 
 import lombok.Data;
 

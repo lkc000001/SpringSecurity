@@ -1,11 +1,6 @@
-package com.springSecurityDemo.entity.request;
+package com.springsecuritydemo.entity.request;
 
 import java.util.Date;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.relational.core.mapping.Table;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 

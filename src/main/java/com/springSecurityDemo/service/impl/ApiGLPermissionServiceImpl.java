@@ -1,38 +1,30 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import static java.util.stream.Collectors.groupingBy;
 
-import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.springSecurityDemo.entity.AppUser;
-import com.springSecurityDemo.entity.RoleFunction;
-import com.springSecurityDemo.entity.UserFunction;
-import com.springSecurityDemo.entity.PermissionResponse;
-import com.springSecurityDemo.exception.PermissionNullException;
-import com.springSecurityDemo.repositories.RoleFunctionRepository;
-import com.springSecurityDemo.repositories.UserFunctionRepository;
-import com.springSecurityDemo.repositories.UserRepository;
-import com.springSecurityDemo.service.ApiGLPermissionService;
-import com.springSecurityDemo.service.UserService;
-import com.springSecurityDemo.util.ValidateUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.springsecuritydemo.entity.AppUser;
+import com.springsecuritydemo.entity.PermissionResponse;
+import com.springsecuritydemo.entity.RoleFunction;
+import com.springsecuritydemo.entity.UserFunction;
+import com.springsecuritydemo.repositories.RoleFunctionRepository;
+import com.springsecuritydemo.repositories.UserFunctionRepository;
+import com.springsecuritydemo.service.ApiGLPermissionService;
+import com.springsecuritydemo.service.UserService;
+import com.springsecuritydemo.util.ValidateUtil;
 
 
 @DS("DBAPIGL")
@@ -40,19 +32,16 @@ import com.baomidou.dynamic.datasource.annotation.DS;
 public class ApiGLPermissionServiceImpl implements ApiGLPermissionService {
 
 	@Autowired
-	RoleFunctionRepository roleFunctionRepository;
+	private RoleFunctionRepository roleFunctionRepository;
 	
 	@Autowired
-	UserFunctionRepository userFunctionRepository;
+	private UserFunctionRepository userFunctionRepository;
 	
 	@Autowired
-	UserService userService;
-
-	@Autowired
-	UserRepository userRepository;
+	private UserService userService;
 	
 	@Autowired
-	ValidateUtil validateUtil;
+	private ValidateUtil validateUtil;
 	
 	
 	@Override
@@ -68,7 +57,7 @@ public class ApiGLPermissionServiceImpl implements ApiGLPermissionService {
 			role.setCreateUser(userService.getSecurityUser(authentication).getAccount());
 		});
 		deleteRoleFunctions(roleFunctions.iterator().next().getApiglRoleId());
-		Iterator<RoleFunction> rolefunctions = roleFunctionRepository.saveAll(roleFunctions).iterator();
+		roleFunctionRepository.saveAll(roleFunctions).iterator();
 		return "修改成功";
 	}
 	
@@ -90,7 +79,7 @@ public class ApiGLPermissionServiceImpl implements ApiGLPermissionService {
 			user.setCreateUser(userService.getSecurityUser(authentication).getAccount());
 		});
 		deleteUserFunctions(userIds.iterator().next().getUserId());
-		Iterator<UserFunction> userfunctions = userFunctionRepository.saveAll(userIds).iterator();
+		userFunctionRepository.saveAll(userIds).iterator();
 		return "修改成功";
 	}
 
@@ -105,18 +94,18 @@ public class ApiGLPermissionServiceImpl implements ApiGLPermissionService {
 			return null;
 		}
 		
-    	Map<String,List<PermissionResponse>> PermissionList = null;
+    	Map<String,List<PermissionResponse>> permissionList = null;
     	
-    	Set<PermissionResponse> UserPermissions = queryUserPermission(user.getUserId());
-    	if (validateUtil.isNotEmpty(UserPermissions)) {
+    	Set<PermissionResponse> userPermissions = queryUserPermission(user.getUserId());
+    	if (validateUtil.isNotEmpty(userPermissions)) {
     		if(user.getGroupName().equals("DC")) {
     			//"DC"全功能都可以使用,不過濾UserFunction Enabled
-    			UserPermissions = UserPermissions.stream()
+    			userPermissions = userPermissions.stream()
 								  .filter(u -> u.getEnabled() != null) 
 								  .filter(u -> u.getEnabled().equals("1"))
 								  .collect(Collectors.toSet());
     		} else {
-    			UserPermissions = UserPermissions.stream()
+    			userPermissions = userPermissions.stream()
 							  	  .filter(u -> u.getEnabled() != null) //過濾Function Enabled的null
 							 	  .filter(u -> u.getEnabled().equals("1")) //過濾Function 不啟用的功能
 				    			  .filter(u -> u.getPermissionenabled() != null) //過濾UserFunction Enabled的null
@@ -124,11 +113,11 @@ public class ApiGLPermissionServiceImpl implements ApiGLPermissionService {
 			    				  .collect(Collectors.toSet());
     		}
     		//分群處理不同類別
-    		PermissionList = UserPermissions.stream()
+    		permissionList = userPermissions.stream()
 							 .sorted(Comparator.comparing(PermissionResponse::getApiglfunctionsort))
 							 .collect(groupingBy(PermissionResponse::getType, LinkedHashMap::new, Collectors.toList()));
 			
     	}
-    	return PermissionList;
+    	return permissionList;
 	}
 }

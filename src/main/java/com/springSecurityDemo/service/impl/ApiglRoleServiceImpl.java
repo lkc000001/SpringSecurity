@@ -1,4 +1,4 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import java.text.ParseException;
 import java.util.Comparator;
@@ -12,37 +12,33 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.springSecurityDemo.entity.ApiGLRole;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.exception.QueryNoDataException;
-import com.springSecurityDemo.repositories.ApiglRoleRepository;
-import com.springSecurityDemo.service.ApiglRoleService;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.service.UserService;
-import com.springSecurityDemo.util.DateTimtUtil;
-import com.springSecurityDemo.util.ValidateUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.springsecuritydemo.entity.ApiGLRole;
+import com.springsecuritydemo.entity.response.JSGridResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.repositories.ApiglRoleRepository;
+import com.springsecuritydemo.service.ApiglRoleService;
+import com.springsecuritydemo.service.ServiceUtil;
+import com.springsecuritydemo.service.UserService;
+import com.springsecuritydemo.util.ValidateUtil;
 
 @DS("DBAPIGL")
 @Service
 public class ApiglRoleServiceImpl implements ApiglRoleService {
 
 	@Autowired
-	ApiglRoleRepository apiglRoleRepository;
+	private ApiglRoleRepository apiglRoleRepository;
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
+	private ValidateUtil validateUtil;
 	
 	@Autowired
-	ServiceUtil serviceUtil;
+	private UserService userService;
 	
 	@Autowired
-	ValidateUtil validateUtil;
-	
-	@Autowired
-	UserService userService;
+	private ServiceUtil serviceUtil;
 	
 	/**
 	 * ApiGLRole Table依查詢條件查詢,依分頁及排序Response
@@ -51,24 +47,21 @@ public class ApiglRoleServiceImpl implements ApiglRoleService {
 	 * @throws ParseException 
 	 */
     @Override
-	public ResponseEntity<?> queryApiGLRole(ApiGLRole apiGLRole) throws ParseException {
+	public ResponseEntity<JSGridReturnData<ApiGLRole>> queryApiGLRole(ApiGLRole apiGLRole) throws ParseException {
     	checkData(apiGLRole);
 		List<ApiGLRole> apiGLRoles = apiglRoleRepository.queryApiglRole(apiGLRole.getApiglRoleNumber(), apiGLRole.getApiglRoleName(), 
-				apiGLRole.getApiglRoleType(), apiGLRole.getApiglRoleDirections(), apiGLRole.getEnabled());
+				apiGLRole.getApiglRoleType(), apiGLRole.getApiglRoleDirections(), apiGLRole.getEnabled(), 
+				apiGLRole.getPageIndex(), apiGLRole.getPageSize());
 		if(apiGLRoles.size() > 0 ) {
-		//分頁,排序
-		int pageSize = apiGLRole.getPageSize();
-		List<ApiGLRole> result = apiGLRoles.stream()
-			.sorted(apiGLRoleSort(apiGLRole.getSortField(), apiGLRole.getSortOrder()))
-			.skip(pageSize * (apiGLRole.getPageIndex() - 1))
-			.limit(pageSize)
-			.collect(Collectors.toList());
+			//排序
+			List<ApiGLRole> result = apiGLRoles.stream()
+					.sorted(apiGLRoleSort(apiGLRole.getSortField(), apiGLRole.getSortOrder()))
+					.collect(Collectors.toList());
 		
-			return new ResponseEntity<JSGridReturnData<ApiGLRole>>(JSGridResponse.getResponseData(result, apiGLRoles.size()), HttpStatus.OK);
+			return new ResponseEntity<>(JSGridResponse.getResponseData(result, apiglRoleRepository.count()), HttpStatus.OK);
 		} else {
 			throw new QueryNoDataException("查無資料!!!", 404);
 		}
-    	//return new ResponseEntity(HttpStatus.OK);
 	}
 
 	/**
@@ -78,7 +71,7 @@ public class ApiglRoleServiceImpl implements ApiglRoleService {
 	 */
     @Override
 	public ApiGLRole findByApiglRoleId(Long apiglRoleId) {
-		return apiglRoleRepository.findById(apiglRoleId).get();
+    	return serviceUtil.checkDataIsPresent(apiglRoleRepository.findById(apiglRoleId));
 	}
 	
     @Override

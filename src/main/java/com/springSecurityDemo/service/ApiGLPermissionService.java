@@ -1,15 +1,12 @@
-package com.springSecurityDemo.service;
+package com.springsecuritydemo.service;
 
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.security.core.Authentication;
 
-import com.springSecurityDemo.entity.RoleFunction;
-import com.springSecurityDemo.entity.UserFunction;
-import com.springSecurityDemo.entity.PermissionResponse;
+import com.springsecuritydemo.entity.PermissionResponse;
+import com.springsecuritydemo.entity.RoleFunction;
+import com.springsecuritydemo.entity.UserFunction;
 
 public interface ApiGLPermissionService {
 	

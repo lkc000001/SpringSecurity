@@ -1,13 +1,10 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import java.text.ParseException;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,44 +13,32 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.springSecurityDemo.entity.ApiGLFunction;
-import com.springSecurityDemo.entity.AppUser;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.exception.QueryNoDataException;
-import com.springSecurityDemo.repositories.ApiglFunctionRepository;
-import com.springSecurityDemo.repositories.UserFunctionRepository;
-import com.springSecurityDemo.service.ApiGLPermissionService;
-import com.springSecurityDemo.service.ApiglFunctionService;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.service.UserService;
-import com.springSecurityDemo.util.DateTimtUtil;
-import com.springSecurityDemo.util.ValidateUtil;
+import com.springsecuritydemo.entity.ApiGLFunction;
+import com.springsecuritydemo.entity.AppUser;
+import com.springsecuritydemo.entity.response.JSGridResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.repositories.ApiglFunctionRepository;
+import com.springsecuritydemo.service.ApiglFunctionService;
+import com.springsecuritydemo.service.ServiceUtil;
+import com.springsecuritydemo.service.UserService;
+import com.springsecuritydemo.util.ValidateUtil;
 
 @DS("DBAPIGL")
 @Service
 public class ApiglFunctionServiceImpl implements ApiglFunctionService {
 
 	@Autowired
-	ApiglFunctionRepository apiglFunctionRepository;
+	private ApiglFunctionRepository apiglFunctionRepository;
 	
 	@Autowired
-	UserFunctionRepository userFunctionRepository;
+	private ValidateUtil validateUtil;
 	
 	@Autowired
-	ValidateUtil validateUtil;
+	private UserService userService;
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
-	
-	@Autowired
-	ServiceUtil serviceUtil;
-	
-	@Autowired
-	UserService userService;
-	
-	@Autowired
-	ApiGLPermissionService apiGLPermissionService;
+	private ServiceUtil serviceUtil;
 	
 	/**
 	 * ApiGLFunction Table依查詢條件查詢,依分頁及排序Response
@@ -62,22 +47,20 @@ public class ApiglFunctionServiceImpl implements ApiglFunctionService {
 	 * @throws ParseException 
 	 */
     @Override
-	public ResponseEntity<?> queryApiglFunction(ApiGLFunction apiGLFunction) throws ParseException
+	public ResponseEntity<JSGridReturnData<ApiGLFunction>> queryApiglFunction(ApiGLFunction apiGLFunction) throws ParseException
 	{
     	checkData(apiGLFunction);
+    	List<ApiGLFunction> apiGLFunctions = apiglFunctionRepository.queryApiglFunction(apiGLFunction.getApiglFunctionName(), apiGLFunction.getApiglFunctionShowName(), 
+				apiGLFunction.getApiglFunctionUrl(), apiGLFunction.getEnabled(), apiGLFunction.getType(), 
+				apiGLFunction.getPageIndex(), apiGLFunction.getPageSize());
 
-		List<ApiGLFunction> apiGLFunctions = apiglFunctionRepository.queryApiglFunction(apiGLFunction.getApiglFunctionName(), apiGLFunction.getApiglFunctionShowName(), 
-				apiGLFunction.getApiglFunctionUrl(), apiGLFunction.getEnabled(), apiGLFunction.getType());
-		if(apiGLFunctions.size() > 0 ) {
-		//分頁,排序
-		int pageSize = apiGLFunction.getPageSize();
-		List<ApiGLFunction> result = apiGLFunctions.stream()
-			.sorted(apiGLFunctionSort(apiGLFunction.getSortField(), apiGLFunction.getSortOrder()))
-			.skip(pageSize * (apiGLFunction.getPageIndex() - 1))
-			.limit(pageSize)
-			.collect(Collectors.toList());
-		
-			return new ResponseEntity<JSGridReturnData<ApiGLFunction>>(JSGridResponse.getResponseData(result, apiGLFunctions.size()), HttpStatus.OK);
+		if(apiGLFunctions.size() > 0) {
+			//排序
+			List<ApiGLFunction> result = apiGLFunctions.stream()
+				.sorted(apiGLFunctionSort(apiGLFunction.getSortField(), apiGLFunction.getSortOrder()))
+				.collect(Collectors.toList());
+			
+			return new ResponseEntity<>(JSGridResponse.getResponseData(result, apiglFunctionRepository.count()), HttpStatus.OK);
 		} else {
 			throw new QueryNoDataException("查無資料!!!", 404);
 		}
@@ -94,7 +77,7 @@ public class ApiglFunctionServiceImpl implements ApiglFunctionService {
 	 */
     @Override
 	public ApiGLFunction findByApiglFunctionId(Long apiglFunctionId) {
-		return apiglFunctionRepository.findById(apiglFunctionId).get();
+    	return serviceUtil.checkDataIsPresent(apiglFunctionRepository.findById(apiglFunctionId));
 	}
 	
     /**
@@ -175,7 +158,7 @@ public class ApiglFunctionServiceImpl implements ApiglFunctionService {
 	 */
 	private void checkData(ApiGLFunction apiGLFunction) {
 		if(validateUtil.isBlank(apiGLFunction.getSortField())) {
-    		apiGLFunction.setSortField("sort");
+    		apiGLFunction.setSortField("apiglfunctionsort");
     	}
     	if(validateUtil.isBlank(apiGLFunction.getSortOrder())) {
     		apiGLFunction.setSortOrder("asc");

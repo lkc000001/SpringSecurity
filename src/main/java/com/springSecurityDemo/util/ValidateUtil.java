@@ -1,4 +1,4 @@
-package com.springSecurityDemo.util;
+package com.springsecuritydemo.util;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -14,65 +14,57 @@ public class ValidateUtil {
     public boolean isEmpty(Object obj) {
         if (obj == null) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     public boolean isNotEmpty(Object obj) {
         if (obj != null) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public boolean isNotEmptyAndSize(List<?> list) {
         if (list != null && list.size() > 0) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     public boolean isBlank(String str) {
         if (str == null || "".equals(str.trim())) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public boolean isNotBlank(String str) {
         if (str != null && !"".equals(str.trim())) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     public boolean isIntegerNull(Integer num) {
         if (num == null) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     public boolean isNotNumNone(Integer num) {
         if (num != null && num != 0) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     public boolean isNotNumNone(BigDecimal num) {
         if (num != null && BigDecimal.ZERO.compareTo(num) != 0) {
             return true;
-        } else {
-            return false;
-        }
+        } 
+        return false;
     }
 
     /**

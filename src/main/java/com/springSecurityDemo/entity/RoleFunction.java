@@ -1,4 +1,4 @@
-package com.springSecurityDemo.entity;
+package com.springsecuritydemo.entity;
 
 import java.io.Serializable;
 import java.util.Date;

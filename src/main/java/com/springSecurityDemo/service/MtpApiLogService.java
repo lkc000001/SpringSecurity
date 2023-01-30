@@ -1,15 +1,16 @@
-package com.springSecurityDemo.service;
+package com.springsecuritydemo.service;
 
 import java.text.ParseException;
 
 import org.springframework.http.ResponseEntity;
 
-import com.springSecurityDemo.entity.MtpApiLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.MtpApiLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
 
 public interface MtpApiLogService {
 	
-	public ResponseEntity<?> queryMtpApiLog(ConditionsRequest conditionsRequest) throws ParseException;
+	public ResponseEntity<JSGridReturnData<MtpApiLog>> queryMtpApiLog(ConditionsRequest conditionsRequest) throws ParseException;
 
 	public MtpApiLog findBymtpLId(Long mtpLId);
 }

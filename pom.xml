@@ -8,12 +8,12 @@
 		<version>2.7.2</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>com.springSecurityDemo</groupId>
-	<artifactId>springSecurityDemo</artifactId>
+	<groupId>com.springsecuritydemo</groupId>
+	<artifactId>springsecuritydemo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>war</packaging>
-	<name>springSecurityDemo</name>
-	<description>springSecurityDemo</description>
+	<name>springsecuritydemo</name>
+	<description>springsecuritydemo</description>
 	<properties>
 		<java.version>1.8</java.version>
 	</properties>
@@ -72,12 +72,6 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		<!--  
-		<dependency>
-			<groupId>com.microsoft.sqlserver</groupId>
-			<artifactId>mssql-jdbc</artifactId>
-			<scope>runtime</scope>
-		</dependency>-->
 		<dependency> 
 			<groupId>com.microsoft.sqlserver</groupId> 
 			<artifactId>mssql-jdbc</artifactId> 
@@ -115,6 +109,12 @@
 		    <groupId>org.springframework.social</groupId>
 		    <artifactId>spring-social-config</artifactId>
 		    <version>1.1.4.RELEASE</version>
+		</dependency>
+		
+		<dependency>
+		    <groupId>org.apache.poi</groupId>
+		    <artifactId>poi-ooxml</artifactId>
+		    <version>4.1.2</version>
 		</dependency>
 		
 	</dependencies>

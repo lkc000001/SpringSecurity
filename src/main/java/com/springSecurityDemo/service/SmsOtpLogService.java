@@ -1,15 +1,16 @@
-package com.springSecurityDemo.service;
+package com.springsecuritydemo.service;
 
 import java.text.ParseException;
 
 import org.springframework.http.ResponseEntity;
 
-import com.springSecurityDemo.entity.SmsOtpLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.SmsOtpLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
 
 public interface SmsOtpLogService {
 	
-	public ResponseEntity<?> querySmsOtpLog(ConditionsRequest conditionsRequest) throws ParseException;
+	public ResponseEntity<JSGridReturnData<SmsOtpLog>> querySmsOtpLog(ConditionsRequest conditionsRequest) throws ParseException;
 
 	public SmsOtpLog findBySolId(Long solId);
 }

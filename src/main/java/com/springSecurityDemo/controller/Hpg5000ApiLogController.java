@@ -1,4 +1,4 @@
-package com.springSecurityDemo.controller;
+package com.springsecuritydemo.controller;
 
 import java.text.ParseException;
 
@@ -13,8 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.service.Hpg5000ApiLogService;
+import com.springsecuritydemo.entity.Hpg5000ApiLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.service.Hpg5000ApiLogService;
 
 @Controller
 @RequestMapping(value = "/hpg5000ApiLog")
@@ -37,7 +39,7 @@ public class Hpg5000ApiLogController {
 	 * @throws ParseException 
 	 */
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> queryHpg5000ApiLog(HttpSession session, @RequestBody ConditionsRequest conditionsRequest) throws ParseException {
+	public ResponseEntity<JSGridReturnData<Hpg5000ApiLog>> queryHpg5000ApiLog(HttpSession session, @RequestBody ConditionsRequest conditionsRequest) throws ParseException {
 		return hpg5000ApiLogService.queryHpg5000ApiLog(conditionsRequest);
     }
 }

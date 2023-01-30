@@ -1,4 +1,4 @@
-package com.springSecurityDemo.filter;
+package com.springsecuritydemo.filter;
 
 import java.io.IOException;
 
@@ -25,13 +25,12 @@ import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import com.springSecurityDemo.controller.ValidateCodeController;
-import com.springSecurityDemo.entity.request.ImageCode;
-import com.springSecurityDemo.exception.AuthCodeException;
-import com.springSecurityDemo.exception.ValidateCodeException;
-import com.springSecurityDemo.util.ValidateUtil;
+import com.springsecuritydemo.controller.ValidateCodeController;
+import com.springsecuritydemo.entity.request.ImageCode;
+import com.springsecuritydemo.exception.AuthCodeException;
+import com.springsecuritydemo.exception.ValidateCodeException;
+import com.springsecuritydemo.util.ValidateUtil;
 
-@Component
 public class ImageCodeValidateFilter extends OncePerRequestFilter {
 
 	//private String codeParamter = "authCode"; 

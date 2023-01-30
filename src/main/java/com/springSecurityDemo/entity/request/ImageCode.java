@@ -1,4 +1,4 @@
-package com.springSecurityDemo.entity.request;
+package com.springsecuritydemo.entity.request;
 
 import java.awt.image.BufferedImage;
 import java.time.LocalDateTime;

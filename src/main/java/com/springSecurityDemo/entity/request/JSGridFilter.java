@@ -1,9 +1,10 @@
-package com.springSecurityDemo.entity.request;
+package com.springsecuritydemo.entity.request;
 
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.relational.core.mapping.Column;
 
 import lombok.Data;
 
@@ -20,11 +21,17 @@ public  @Data class JSGridFilter {
 	@Transient
 	private String sortOrder;
 	
+	@Column("showDate")
 	@Transient
 	private String showDate;
 	
+	@Column("showTime")
 	@Transient
 	private String showTime;
+	
+	@Column("totalCount")
+	@Transient
+	private String totalCount;
 	
     public Pageable convertToSpringPagingObject()
     {

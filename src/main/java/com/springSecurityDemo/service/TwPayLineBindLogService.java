@@ -1,16 +1,17 @@
-package com.springSecurityDemo.service;
+package com.springsecuritydemo.service;
 
 import java.text.ParseException;
 
 import org.springframework.http.ResponseEntity;
 
-import com.springSecurityDemo.entity.TwPayLineBindLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.TwPayLineBindLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
 
 
 public interface TwPayLineBindLogService {
 	
-	public ResponseEntity<?> querytwPayLineBindLog(ConditionsRequest conditionsRequest) throws ParseException;
+	public ResponseEntity<JSGridReturnData<TwPayLineBindLog>> querytwPayLineBindLog(ConditionsRequest conditionsRequest) throws ParseException;
 
 	public TwPayLineBindLog findBytwPayLineBindLogId(Long twPayLineBindLogid);
 

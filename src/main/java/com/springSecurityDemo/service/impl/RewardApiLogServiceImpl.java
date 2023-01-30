@@ -1,4 +1,4 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import java.text.ParseException;
 import java.util.Comparator;
@@ -11,28 +11,24 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.baomidou.dynamic.datasource.annotation.DS;
-import com.springSecurityDemo.entity.RewardAPILog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.exception.QueryNoDataException;
-import com.springSecurityDemo.repositories.RewardApiLogRepository;
-import com.springSecurityDemo.service.RewardApiLogService;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.util.DateTimtUtil;
+import com.springsecuritydemo.entity.RewardAPILog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.repositories.RewardApiLogRepository;
+import com.springsecuritydemo.service.RewardApiLogService;
+import com.springsecuritydemo.service.ServiceUtil;
 
 @DS("DBTREWARD")
 @Service
 public class RewardApiLogServiceImpl implements RewardApiLogService {
 
 	@Autowired
-	RewardApiLogRepository rewardAPILogRepository;
+	private RewardApiLogRepository rewardAPILogRepository;
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
-	
-	@Autowired
-	ServiceUtil serviceUtil;
+	private ServiceUtil serviceUtil;
 	
 	/**
 	 * RewardAPILog Table依查詢條件查詢,依分頁及排序Response
@@ -41,27 +37,20 @@ public class RewardApiLogServiceImpl implements RewardApiLogService {
 	 * @throws ParseException 
 	 */
     @Override
-	public ResponseEntity<?> queryRewardAPILog(ConditionsRequest conditionsRequest) throws ParseException
+	public ResponseEntity<JSGridReturnData<RewardAPILog>> queryRewardAPILog(ConditionsRequest conditionsRequest) throws ParseException
 	{
 		serviceUtil.requestDateCheck(conditionsRequest);
 		
 		List<RewardAPILog> rewardAPILogs = rewardAPILogRepository.queryRewardAPILog(conditionsRequest.getQueryUserId(), conditionsRequest.getStartDate(), 
-										conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryType(), 
-										conditionsRequest.getQueryUrl());
+				conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryType(), 
+				conditionsRequest.getQueryUrl(), conditionsRequest.getPageIndex(), conditionsRequest.getPageSize());
 		if(rewardAPILogs.size() > 0 ) {
-			//分頁,排序
-			int pageSize = conditionsRequest.getPageSize();
+		//排序
 			List<RewardAPILog> result = rewardAPILogs.stream()
-				.peek(lpm -> {
-						lpm.setShowDate(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "yyyy-MM-dd"));
-						lpm.setShowTime(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "HH:mm:ss"));
-					})
-				.sorted(rewardAPILogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
-				.skip(pageSize * (conditionsRequest.getPageIndex() - 1))
-				.limit(pageSize)
-				.collect(Collectors.toList());
-			
-			return new ResponseEntity<JSGridReturnData<RewardAPILog>>(JSGridResponse.getResponseData(result, rewardAPILogs.size()), HttpStatus.OK);
+					.sorted(rewardAPILogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
+					.collect(Collectors.toList());
+		
+			return new ResponseEntity<>(JSGridResponse.getResponseData(result, rewardAPILogRepository.count()), HttpStatus.OK);
 		} else {
 			throw new QueryNoDataException("查無資料!!!", 404);
 		}
@@ -74,7 +63,7 @@ public class RewardApiLogServiceImpl implements RewardApiLogService {
 	 */
     @Override
 	public RewardAPILog findByrewardId(Long rewardId) {
-		return rewardAPILogRepository.findById(rewardId).get();
+		return serviceUtil.checkDataIsPresent(rewardAPILogRepository.findById(rewardId));
 	}
 	
 	/**
@@ -97,10 +86,10 @@ public class RewardApiLogServiceImpl implements RewardApiLogService {
 			return sortOrder.equals("asc") ? 
 					Comparator.comparing(RewardAPILog::getRewardTxnTime) : 
 						Comparator.comparing(RewardAPILog::getRewardTxnTime).reversed();
-		}
-		
-		return sortOrder.equals("asc") ? 
+		default:
+			return sortOrder.equals("asc") ? 
 				Comparator.comparing(RewardAPILog::getRewardId) : 
 					Comparator.comparing(RewardAPILog::getRewardId).reversed();
+		}
 	}
 }

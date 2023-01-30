@@ -1,4 +1,4 @@
-package com.springSecurityDemo.controller;
+package com.springsecuritydemo.controller;
 
 import java.text.ParseException;
 
@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.service.UserTrackLogService;
+import com.springsecuritydemo.entity.UserTrackLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.service.UserTrackLogService;
 
 @Controller
 @RequestMapping(value = "/userTrackLog")
@@ -34,7 +36,7 @@ public class UserTrackLogController {
 	 * @throws ParseException 
 	 */
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> queryUserTrackLog(@RequestBody ConditionsRequest conditionsRequest) throws ParseException {
+	public ResponseEntity<JSGridReturnData<UserTrackLog>> queryUserTrackLog(@RequestBody ConditionsRequest conditionsRequest) throws ParseException {
 		return userTrackLogService.queryUserTrackLog(conditionsRequest);
     }
 	

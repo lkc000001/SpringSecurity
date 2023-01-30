@@ -1,16 +1,16 @@
-package com.springSecurityDemo.service;
+package com.springsecuritydemo.service;
 
 import java.text.ParseException;
-import java.util.List;
 
 import org.springframework.http.ResponseEntity;
 
-import com.springSecurityDemo.entity.LpmApiLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.LpmApiLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
 
 public interface LpmApiLogService {
 
-	public ResponseEntity<?> queryLpmApiLog(ConditionsRequest conditionsRequest) throws ParseException;
+	public ResponseEntity<JSGridReturnData<LpmApiLog>> queryLpmApiLog(ConditionsRequest conditionsRequest) throws ParseException;
 
 	public LpmApiLog findByLpmid(Long lpmid);
 	

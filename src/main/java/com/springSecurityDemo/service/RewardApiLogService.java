@@ -1,16 +1,17 @@
-package com.springSecurityDemo.service;
+package com.springsecuritydemo.service;
 
 import java.text.ParseException;
 
 import org.springframework.http.ResponseEntity;
 
-import com.springSecurityDemo.entity.RewardAPILog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.RewardAPILog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
 
 
 public interface RewardApiLogService {
 	
-	public ResponseEntity<?> queryRewardAPILog(ConditionsRequest conditionsRequest) throws ParseException;
+	public ResponseEntity<JSGridReturnData<RewardAPILog>> queryRewardAPILog(ConditionsRequest conditionsRequest) throws ParseException;
 
 	public RewardAPILog findByrewardId(Long rewardId);
 }

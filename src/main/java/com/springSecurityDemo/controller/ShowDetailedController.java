@@ -1,33 +1,24 @@
-package com.springSecurityDemo.controller;
-
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Map;
+package com.springsecuritydemo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.service.ApiGuiLogService;
-import com.springSecurityDemo.service.Hpg5000ApiLogService;
-import com.springSecurityDemo.service.IcpApiLogService;
-import com.springSecurityDemo.service.LpmApiLogService;
-import com.springSecurityDemo.service.MtpApiLogService;
-import com.springSecurityDemo.service.RewardApiLogService;
-import com.springSecurityDemo.service.SmsOtpLogService;
-import com.springSecurityDemo.service.TwPayLineBindLogService;
-import com.springSecurityDemo.service.UserTrackLogService;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.service.ApiGuiLogService;
+import com.springsecuritydemo.service.Hpg5000ApiLogService;
+import com.springsecuritydemo.service.IcpApiLogService;
+import com.springsecuritydemo.service.LpmApiLogService;
+import com.springsecuritydemo.service.MtpApiLogService;
+import com.springsecuritydemo.service.RewardApiLogService;
+import com.springsecuritydemo.service.SmsOtpLogService;
+import com.springsecuritydemo.service.TwPayLineBindLogService;
+import com.springsecuritydemo.service.UserTrackLogService;
 
 @Controller
 @RequestMapping(value = "/showDetailed")
@@ -103,17 +94,17 @@ public class ShowDetailedController {
 				break;
 			case "UserTrackLog":
 				respTable = userTrackLogService.findByUserTrackId(queryId);
-				break;	
+				break;
+			default: 
+				throw new QueryNoDataException("查詢失敗!!! <BR>", 400);
 			}
 
 			model.addAttribute("selectFunction", queryTable);
 			model.addAttribute("detailedresp", objectMapper.writeValueAsString(respTable));
-			//throw new Exception();
 			return "showDetailed";
 		} catch (JsonProcessingException e) {
 			model.addAttribute("errorMsg", "Json格式轉換錯誤!!! <BR>");
 		} catch (Exception e) {
-			e.printStackTrace();
 			model.addAttribute("errorMsg", "查詢失敗!!! <BR>");
 		}
 		return "error";

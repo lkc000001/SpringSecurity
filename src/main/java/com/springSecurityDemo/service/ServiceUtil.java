@@ -1,11 +1,13 @@
-package com.springSecurityDemo.service;
+package com.springsecuritydemo.service;
 
 import java.text.ParseException;
+import java.util.Optional;
 
-import com.springSecurityDemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
 
 public interface ServiceUtil {
 	
 	void requestDateCheck(ConditionsRequest conditionsRequest) throws ParseException;
 	
+	<T> T checkDataIsPresent(Optional<T> data);
 }

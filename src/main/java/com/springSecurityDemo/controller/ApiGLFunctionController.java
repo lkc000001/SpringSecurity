@@ -1,9 +1,6 @@
-package com.springSecurityDemo.controller;
+package com.springsecuritydemo.controller;
 
 import java.text.ParseException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,10 +17,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.springSecurityDemo.entity.ApiGLFunction;
-import com.springSecurityDemo.service.ApiglFunctionService;
-import com.springSecurityDemo.util.ValidateUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.springsecuritydemo.entity.ApiGLFunction;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.service.ApiglFunctionService;
+import com.springsecuritydemo.util.ValidateUtil;
 
 @Controller
 @RequestMapping(value = "/apiGLFunction")
@@ -55,7 +53,7 @@ public class ApiGLFunctionController {
 	 * @throws ParseException 
 	 */
 	@PostMapping(path = "/", consumes = "application/json", produces = "application/json")
-	public ResponseEntity<?> queryApiglFunction(@RequestBody ApiGLFunction apiGLFunction) throws ParseException {
+	public ResponseEntity<JSGridReturnData<ApiGLFunction>> queryApiglFunction(@RequestBody ApiGLFunction apiGLFunction) throws ParseException {
 		return apiglFunctionService.queryApiglFunction(apiGLFunction);
     }
 	
@@ -89,7 +87,7 @@ public class ApiGLFunctionController {
      * @throws JsonProcessingException
      */
     @PutMapping(path = "/save")
-	public String update(final Authentication authentication, ApiGLFunction apiGLFunction) throws JsonProcessingException {
+	public String update(final Authentication authentication, ApiGLFunction apiGLFunction) {
     	respMsg = apiglFunctionService.save(apiGLFunction, "修改", authentication);
 		return "redirect:./";
     }
@@ -100,7 +98,7 @@ public class ApiGLFunctionController {
      * @return
      */
     @DeleteMapping(path = "/delete")
-	public ResponseEntity<?> delete(Long id){
+	public ResponseEntity<String> delete(Long id){
     	apiglFunctionService.delete(id);
 		return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -1,19 +1,17 @@
-package com.springSecurityDemo.service;
+package com.springsecuritydemo.service;
 
 import java.text.ParseException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
-import com.springSecurityDemo.entity.ApiGLFunction;
+import com.springsecuritydemo.entity.ApiGLFunction;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
 
 public interface ApiglFunctionService {
 	
-	ResponseEntity<?> queryApiglFunction(ApiGLFunction apiGLFunction) throws ParseException;
+	ResponseEntity<JSGridReturnData<ApiGLFunction>> queryApiglFunction(ApiGLFunction apiGLFunction) throws ParseException;
 
 	ApiGLFunction findByApiglFunctionId(Long apiglFunctionId);
 	

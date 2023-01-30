@@ -1,9 +1,11 @@
-package com.springSecurityDemo.config;
+package com.springsecuritydemo.config;
 
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +14,6 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -20,7 +21,8 @@ import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
-import com.springSecurityDemo.service.UserService;
+import com.springsecuritydemo.entity.PermissionResponse;
+import com.springsecuritydemo.service.UserService;
 
 public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSuccessHandler {
     
@@ -46,22 +48,16 @@ public class MySimpleUrlAuthenticationSuccessHandler implements AuthenticationSu
     // IMPL
 
     protected void handle(final HttpServletRequest request, final HttpServletResponse response, final Authentication authentication) throws IOException {
-        //final String targetUrl = determineTargetUrl(authentication);
-    	request.getSession().removeAttribute("AppUser");
-    	String targetUrl = "";
-    	System.out.println(userService.getFunctions(authentication).get(0));
-    	if(userService.getFunctions(authentication).get(0) ==null) {
-    		throw new InternalAuthenticationServiceException("未授權");
-    	}
+    	String targetUrl = "/lpmApiLog/";
+    	Map<String, List<PermissionResponse>> userPermission = userService.getFunctions(authentication);
     	
-    	targetUrl = userService.getFunctions(authentication).get(0).get(0).getApiglfunctionurl();
-    	
-        if (response.isCommitted()) {
-            logger.debug("Response has already been committed. Unable to redirect to " + targetUrl);
-            return;
-        }
-        
-        request.getSession().setAttribute("functions", userService.getFunctions(authentication));
+    	if (userPermission != null) {
+    		Optional<List<PermissionResponse>> permissionResponses = userPermission.values().stream().findFirst();
+	    	if(permissionResponses.isPresent()) {
+	    		targetUrl =  permissionResponses.get().get(0).getApiglfunctionurl();
+	    	}
+	        request.getSession().setAttribute("functions", userPermission);
+	    }
         redirectStrategy.sendRedirect(request, response, targetUrl);
     }
 

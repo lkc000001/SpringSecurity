@@ -1,4 +1,4 @@
-package com.springSecurityDemo.repositories;
+package com.springsecuritydemo.repositories;
 
 import java.util.List;
 import java.util.Set;
@@ -7,8 +7,8 @@ import org.springframework.data.jdbc.repository.query.Modifying;
 import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 
-import com.springSecurityDemo.entity.RoleFunction;
-import com.springSecurityDemo.entity.PermissionResponse;
+import com.springsecuritydemo.entity.PermissionResponse;
+import com.springsecuritydemo.entity.RoleFunction;
 
 public interface RoleFunctionRepository extends CrudRepository<RoleFunction, Long>{
 

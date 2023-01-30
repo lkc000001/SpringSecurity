@@ -1,4 +1,4 @@
-package com.springSecurityDemo.service.impl;
+package com.springsecuritydemo.service.impl;
 
 import java.text.ParseException;
 import java.util.Comparator;
@@ -10,29 +10,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import com.springSecurityDemo.entity.SmsOtpLog;
-import com.springSecurityDemo.entity.request.ConditionsRequest;
-import com.springSecurityDemo.entity.response.JSGridResponse;
-import com.springSecurityDemo.entity.response.JSGridReturnData;
-import com.springSecurityDemo.exception.QueryNoDataException;
-import com.springSecurityDemo.repositories.SmsOtpLogRepository;
-import com.springSecurityDemo.service.ServiceUtil;
-import com.springSecurityDemo.service.SmsOtpLogService;
-import com.springSecurityDemo.util.DateTimtUtil;
 import com.baomidou.dynamic.datasource.annotation.DS;
+import com.springsecuritydemo.entity.SmsOtpLog;
+import com.springsecuritydemo.entity.request.ConditionsRequest;
+import com.springsecuritydemo.entity.response.JSGridResponse;
+import com.springsecuritydemo.entity.response.JSGridReturnData;
+import com.springsecuritydemo.exception.QueryNoDataException;
+import com.springsecuritydemo.repositories.SmsOtpLogRepository;
+import com.springsecuritydemo.service.ServiceUtil;
+import com.springsecuritydemo.service.SmsOtpLogService;
 
 @DS("DBTOAPI")
 @Service
 public class SmsOtpLogServiceImpl implements SmsOtpLogService {
 
 	@Autowired
-	SmsOtpLogRepository smsOtpLogRepository;
+	private SmsOtpLogRepository smsOtpLogRepository;
 	
 	@Autowired
-	DateTimtUtil dateTimtUtil;
-	
-	@Autowired
-	ServiceUtil serviceUtil;
+	private ServiceUtil serviceUtil;
 	
 	/**
 	 * LpmApiLog Table依查詢條件查詢,依分頁及排序Response
@@ -41,27 +37,20 @@ public class SmsOtpLogServiceImpl implements SmsOtpLogService {
 	 * @throws ParseException 
 	 */
     @Override
-	public ResponseEntity<?> querySmsOtpLog(ConditionsRequest conditionsRequest) throws ParseException
+	public ResponseEntity<JSGridReturnData<SmsOtpLog>> querySmsOtpLog(ConditionsRequest conditionsRequest) throws ParseException
 	{
 		serviceUtil.requestDateCheck(conditionsRequest);
 
 		List<SmsOtpLog> smsOtpLogs = smsOtpLogRepository.querySmsOtpLog(conditionsRequest.getQueryUserId(), conditionsRequest.getStartDate(), 
-									 conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryType(), 
-									 conditionsRequest.getQueryUrl());
-		//分頁,排序
+				 conditionsRequest.getEndDate(), conditionsRequest.getQueryData(), conditionsRequest.getQueryType(), 
+				 conditionsRequest.getQueryUrl(), conditionsRequest.getPageIndex(), conditionsRequest.getPageSize());
+		//排序
 		if(smsOtpLogs.size() > 0) {
-			int pageSize = conditionsRequest.getPageSize();
 			List<SmsOtpLog> result = smsOtpLogs.stream()
-				.peek(lpm -> {
-						lpm.setShowDate(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "yyyy-MM-dd"));
-						lpm.setShowTime(dateTimtUtil.formatDateToStr(lpm.getCreatetime(), "HH:mm:ss"));
-					})
-				.sorted(smsOtpLogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
-				.skip(pageSize * (conditionsRequest.getPageIndex() - 1))
-				.limit(pageSize)
-				.collect(Collectors.toList());
+					.sorted(smsOtpLogSort(conditionsRequest.getSortField(), conditionsRequest.getSortOrder()))
+					.collect(Collectors.toList());
 			
-			return new ResponseEntity<JSGridReturnData<SmsOtpLog>>(JSGridResponse.getResponseData(result, smsOtpLogs.size()), HttpStatus.OK);
+			return new ResponseEntity<>(JSGridResponse.getResponseData(result, smsOtpLogRepository.count()), HttpStatus.OK);
 		} else {
 			throw new QueryNoDataException("查無資料!!!", 404);
 		} 
@@ -74,7 +63,7 @@ public class SmsOtpLogServiceImpl implements SmsOtpLogService {
 	 */
     @Override
 	public SmsOtpLog findBySolId(Long solId) {
-		return smsOtpLogRepository.findById(solId).get();
+		return serviceUtil.checkDataIsPresent(smsOtpLogRepository.findById(solId));
 	}
 	
 	/**
@@ -97,10 +86,10 @@ public class SmsOtpLogServiceImpl implements SmsOtpLogService {
 			return sortOrder.equals("asc") ? 
 					Comparator.comparing(SmsOtpLog::getSysFlag) : 
 						Comparator.comparing(SmsOtpLog::getSysFlag).reversed();	
-		}
-		
-		return sortOrder.equals("asc") ? 
+		default:
+			return sortOrder.equals("asc") ? 
 				Comparator.comparing(SmsOtpLog::getSolId) : 
 					Comparator.comparing(SmsOtpLog::getSolId).reversed();
+		}	
 	}
 }

@@ -1,4 +1,4 @@
-package com.springSecurityDemo.repositories;
+package com.springsecuritydemo.repositories;
 
 import java.util.List;
 
@@ -6,7 +6,7 @@ import org.springframework.data.jdbc.repository.query.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
 
-import com.springSecurityDemo.entity.ApiGLRole;
+import com.springsecuritydemo.entity.ApiGLRole;
 
 
 public interface ApiglRoleRepository extends CrudRepository<ApiGLRole, Long>{
@@ -17,9 +17,15 @@ public interface ApiglRoleRepository extends CrudRepository<ApiGLRole, Long>{
 			"  AND ((:apiglRoleName IS NULL OR :apiglRoleName = '') OR apiglrolename=:apiglRoleName) " + 
 			"  AND ((:apiglRoleType IS NULL OR :apiglRoleType = '') OR apiglroletype=:apiglRoleType) " + 
 			"  AND ((:apiglRoleDirections IS NULL OR :apiglRoleDirections = '') OR apiglroledirections LIKE :apiglRoleDirections) " + 
-			"  AND ((:enabled IS NULL OR :enabled = '') OR enabled=:enabled) ")
+			"  AND ((:enabled IS NULL OR :enabled = '') OR enabled=:enabled) " + 
+			"  ORDER BY apiglroleid DESC " + 
+			"  OFFSET (:PageIndex -1) * :PageSize ROWS " + 
+			"  FETCH NEXT :PageSize ROWS ONLY")
 	List<ApiGLRole> queryApiglRole(@Param("apiglRoleNumber") String apiglRoleNumber, @Param("apiglRoleName") String apiglRoleName, 
-			 @Param("apiglRoleType") String apiglRoleType, @Param("apiglRoleDirections") String apiglRoleDirections, @Param("enabled") String enabled);
+			 @Param("apiglRoleType") String apiglRoleType, @Param("apiglRoleDirections") String apiglRoleDirections, 
+			 @Param("enabled") String enabled, @Param("PageIndex") Integer pageIndex, @Param("PageSize") Integer pageSize);
+	
+	long count();
 	
 	ApiGLRole findByApiglRoleNameAndApiglRoleNumberAndApiglRoleType(String apiglrolename, String apiglrolenumber, String apiglRoleType);
 
